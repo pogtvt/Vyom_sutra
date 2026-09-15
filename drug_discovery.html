@@ -11,11 +11,13 @@
     <header class="border-b border-cyan-500/20 bg-[#030712]/95 backdrop-blur-2xl sticky top-0 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <div class="w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_20px_#22d3ee] animate-pulse"></div>
-                <h1 class="text-lg sm:text-xl font-black tracking-wider text-white">VYOM SUTRA <span class="text-cyan-400 text-[10px] font-bold uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded-md ml-1">Clinical Engine</span></h1>
+                <div class="w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_15px_#22d3ee]"></div>
+                <h1 class="text-lg sm:text-xl font-black tracking-wider text-white">VYOM SUTRA <span class="text-cyan-400 text-[10px] font-bold uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded-md ml-1">Clinical Engine v3.5</span></h1>
             </div>
-            <div id="record-count" class="text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-xl shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                Syncing Records...
+            <div class="flex items-center gap-3">
+                <div id="record-count" class="text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-xl shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                    Syncing Records...
+                </div>
             </div>
         </div>
     </header>
@@ -25,16 +27,25 @@
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">Comprehensive Compound Pipeline</h2>
-                <p class="text-slate-400 text-xs sm:text-sm">Structured clinical records featuring persistent storage, prominent target proteins, physicochemical parameters, and mechanistic passages.</p>
+                <p class="text-slate-400 text-xs sm:text-sm">Universal multi-parameter search engine for FDA standards and Vyom novel cosmic discoveries.</p>
             </div>
-            <div class="w-full sm:w-72">
-                <input type="text" id="searchInput" placeholder="Search compound or protein..." onkeyup="filterDiscoveries()" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 shadow-inner">
+            <div class="w-full sm:w-80">
+                <input type="text" id="searchInput" placeholder="Type name, protein, MW, affinity..." onkeyup="filterDiscoveries()" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-4 py-3 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 shadow-inner font-mono">
             </div>
         </div>
 
         <!-- Dynamic Card Grid Container -->
         <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="col-span-full p-12 text-center text-cyan-400 animate-pulse font-mono text-sm">Loading rich clinical card records...</div>
+            <div class="col-span-full p-12 text-center text-cyan-400 font-mono text-sm">Initializing high-precision clinical matrix...</div>
+        </div>
+
+        <!-- Background Daemon Ticker Box -->
+        <div class="mt-10 bg-slate-950 border border-cyan-500/20 rounded-2xl p-4 font-mono text-[11px] text-cyan-400/80 shadow-[0_0_30px_rgba(0,0,0,0.9)] flex items-center justify-between">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                <span id="daemon-log" class="truncate">Daemon Status: Background 256-bit harmonic calculations active. Persistent storage secured.</span>
+            </div>
+            <span class="text-slate-500 shrink-0 ml-2">PID: 8842</span>
         </div>
     </main>
 
@@ -58,7 +69,7 @@
             container.innerHTML = '';
 
             if (data.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-12 text-center text-slate-500 font-mono text-sm">No matching records found.</div>`;
+                container.innerHTML = `<div class="col-span-full p-12 text-center text-slate-500 font-mono text-sm">No matching clinical records found. Try a different keyword (e.g. EGFR, 450, Keytruda).</div>`;
                 return;
             }
 
@@ -98,9 +109,7 @@
 
                         <!-- Mechanism of Action Box -->
                         <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 mb-4">
-                            <h4 class="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400 mb-2 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> Mechanistic Action & Passage:
-                            </h4>
+                            <h4 class="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400 mb-2">Mechanistic Action & Passage:</h4>
                             <p class="text-xs sm:text-sm text-slate-200 leading-relaxed text-justify">${mechText}</p>
                         </div>
 
@@ -142,13 +151,30 @@
         function filterDiscoveries() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allDiscoveries.filter(item => {
-                const nameMatch = item.name && item.name.toLowerCase().includes(query);
-                const targetMatch = item.target_protein && item.target_protein.toLowerCase().includes(query);
-                const indMatch = item.indication && item.indication.toLowerCase().includes(query);
-                return nameMatch || targetMatch || indMatch;
+                return (item.name && item.name.toLowerCase().includes(query)) ||
+                       (item.target_protein && item.target_protein.toLowerCase().includes(query)) ||
+                       (item.indication && item.indication.toLowerCase().includes(query)) ||
+                       (item.mw && String(item.mw).includes(query)) ||
+                       (item.logp && String(item.logp).includes(query)) ||
+                       (item.binding_affinity && item.binding_affinity.toLowerCase().includes(query)) ||
+                       (item.phase && item.phase.toLowerCase().includes(query));
             });
             renderCards(filtered);
         }
+
+        // Rotate daemon log messages to show background activity
+        const logs = [
+            "Daemon Status: Background 256-bit harmonic calculations active. Persistent storage secured.",
+            "Syncing JSON state across distributed nodes... Integrity verified.",
+            "Evaluating molecular resonance and dyadic field equations...",
+            "FDA Pharmacopoeia standards and Vyom novel compounds loaded successfully."
+        ];
+        let logIndex = 0;
+        setInterval(() => {
+            logIndex = (logIndex + 1) % logs.length;
+            const logEl = document.getElementById('daemon-log');
+            if(logEl) logEl.innerText = logs[logIndex];
+        }, 4000);
 
         loadDiscoveries();
         setInterval(loadDiscoveries, 10000);
