@@ -1,5 +1,44 @@
 [
     {
+        "id": "VYOM-GEN-88500",
+        "name": "Vyom-Sutra-k65536-947",
+        "type": "Dyadic Inverse Generated",
+        "mw": 449.36,
+        "logp": 2.68,
+        "phase_angle": 1.2566,
+        "c_mu_nu": 0.0,
+        "affinity_score": 100.0,
+        "sa_score": 9.8,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 18:57:35"
+    },
+    {
+        "id": "CID-71496458",
+        "name": "Osimertinib (3rd Gen)",
+        "type": "Benchmark",
+        "mw": 499.6,
+        "logp": 3.9,
+        "phase_angle": 1.4891,
+        "c_mu_nu": 11.52,
+        "affinity_score": 89.75,
+        "sa_score": 9.5,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 18:57:35"
+    },
+    {
+        "id": "VYOM-GEN-42031",
+        "name": "Vyom-Sutra-k65536-489",
+        "type": "Dyadic Inverse Generated",
+        "mw": 419.36,
+        "logp": 3.34,
+        "phase_angle": 1.2566,
+        "c_mu_nu": 0.0,
+        "affinity_score": 100.0,
+        "sa_score": 9.5,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 18:57:35"
+    },
+    {
         "id": "CID-71496458",
         "name": "Osimertinib (3rd Gen)",
         "type": "Benchmark",
