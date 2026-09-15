@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vyom-sutra"
+version = "0.1.1"
+description = "Vyom Sutra Core & LLM Engine with Wave Phase Mechanics"
+readme = "README.md"
+authors = [{ name = "Sanjok Thapa" }]
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.8"
+
+[project.urls]
+Homepage = "https://github.com/pogtvt/Vyom_sutra"

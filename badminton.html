@@ -2,78 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Badminton Physics Simulation</title>
+    <title>Badminton Physics Simulation | Vyom Sutra</title>
     <style>
-        body { background: #030712; color: #f3f4f6; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
-        h1 { color: #38bdf8; margin: 5px; font-size: 18px; text-align: center; }
-        canvas { background: #0f172a; border: 2px solid #38bdf8; border-radius: 8px; width: 100%; max-width: 600px; height: auto; display: block; }
-        .score { font-size: 13px; color: #10b981; margin-bottom: 8px; font-weight: bold; text-align: center; }
-        .back-link { display: block; margin-top: 15px; color: #38bdf8; text-decoration: none; font-size: 12px; font-weight: bold; background: #1e293b; padding: 10px; border-radius: 6px; border: 1px solid #38bdf8; text-align: center; max-width: 600px; box-sizing: border-box; }
+        body { background: #030712; color: #f3f4f6; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        h1 { color: #38bdf8; margin: 5px; font-size: 22px; }
+        canvas { background: #0f172a; border: 2px solid #38bdf8; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .score { font-size: 16px; color: #10b981; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h1>🏸 Badminton Physics Simulation</h1>
-    <div class="score">Score: <span id="scoreVal">0</span> | Touch/Move up-down to play</div>
-    <canvas id="gameCanvas" width="600" height="250"></canvas>
-    <a href="index.html" class="back-link">← Back to Dashboard Hub</a>
+    <h1>🏸 Badminton Physics Simulation Game</h1>
+    <div class="score">Score: <span id="scoreVal">0</span> | Use Mouse to Move Racket</div>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
+
         let score = 0;
-        let shuttle = { x: 60, y: 125, vx: 3.5, vy: 2, radius: 7 };
-        let racket = { x: 570, y: 100, width: 12, height: 60 };
+        let shuttle = { x: 100, y: 150, vx: 4, vy: 2, radius: 8 };
+        let racket = { x: 700, y: 200, width: 15, height: 80 };
 
         canvas.addEventListener("mousemove", (e) => {
             const rect = canvas.getBoundingClientRect();
-            racket.y = (e.clientY - rect.top) * (canvas.height / rect.height) - racket.height / 2;
+            racket.y = e.clientY - rect.top - racket.height / 2;
         });
-        canvas.addEventListener("touchmove", (e) => {
-            const rect = canvas.getBoundingClientRect();
-            if(e.touches.length > 0) {
-                racket.y = (e.touches[0].clientY - rect.top) * (canvas.height / rect.height) - racket.height / 2;
-            }
-            e.preventDefault();
-        }, {passive: false});
 
-        function updateGame() {
+        function update() {
             shuttle.x += shuttle.vx;
             shuttle.y += shuttle.vy;
-            shuttle.vy += 0.07;
 
-            if (shuttle.y < 10) { shuttle.y = 10; shuttle.vy *= -1; }
-            if (shuttle.y > canvas.height - 10) { shuttle.y = canvas.height - 10; shuttle.vy *= -1; }
-            if (shuttle.x < 10) { shuttle.x = 10; shuttle.vx *= -1; }
+            // Gravity wave effect
+            shuttle.vy += 0.08;
 
+            // Wall collisions (Top/Bottom)
+            if (shuttle.y < 10 || shuttle.y > canvas.height - 10) {
+                shuttle.vy *= -1;
+            }
+
+            // Left wall bounce
+            if (shuttle.x < 10) {
+                shuttle.vx *= -1;
+            }
+
+            // Racket collision
             if (
                 shuttle.x >= racket.x &&
-                shuttle.x <= racket.x + racket.width &&
                 shuttle.y >= racket.y &&
                 shuttle.y <= racket.y + racket.height
             ) {
-                shuttle.vx *= -1.08;
+                shuttle.vx *= -1.1; // Speed up slightly on hit
                 shuttle.vy += (Math.random() - 0.5) * 3;
                 score++;
                 document.getElementById("scoreVal").innerText = score;
             }
 
+            // Miss check
             if (shuttle.x > canvas.width) {
                 score = 0;
                 document.getElementById("scoreVal").innerText = score;
-                shuttle.x = 60; shuttle.y = 125; shuttle.vx = 3.5; shuttle.vy = 2;
+                shuttle.x = 100;
+                shuttle.y = 150;
+                shuttle.vx = 4;
+                shuttle.vy = 2;
             }
         }
 
-        function drawGame() {
+        function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "#38bdf8"; ctx.setLineDash([4, 4]);
-            ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
+
+            // Draw Net
+            ctx.strokeStyle = "#38bdf8";
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
             ctx.setLineDash([]);
-            ctx.fillStyle = "#10b981"; ctx.beginPath(); ctx.arc(shuttle.x, shuttle.y, shuttle.radius, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "#a855f7"; ctx.fillRect(racket.x, racket.y, racket.width, racket.height);
+
+            // Draw Shuttlecock
+            ctx.fillStyle = "#10b981";
+            ctx.beginPath();
+            ctx.arc(shuttle.x, shuttle.y, shuttle.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Racket
+            ctx.fillStyle = "#a855f7";
+            ctx.fillRect(racket.x, racket.y, racket.width, racket.height);
         }
 
-        function gameLoop() { updateGame(); drawGame(); requestAnimationFrame(gameLoop); }
-        gameLoop();
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
     </script>
 </body>
 </html>
