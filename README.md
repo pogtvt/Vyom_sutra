@@ -1,6 +1,6 @@
 python3 -c '
-content = """# 🚀 Vyom Sutra (व्योम सूत्र)
-### *Ultra-Fast Wave-Based Decision, Signal Processing & Computational Drug Discovery Engine*
+content = """# 🚀 Vyom Sutra
+### *Ultra-Fast Wave-Based Decision, Signal Processing & Computational Drug Discovery Engine* (व्योम सूत्र)
 
 <div align="center">
 
