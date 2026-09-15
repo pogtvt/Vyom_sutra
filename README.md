@@ -17,7 +17,7 @@ content = """# 🚀 Vyom Sutra (व्योम सूत्र)
 
 ## ⚡ Overview
 
-**Vyom Sutra** is a high-performance, autonomous 64-bit harmonic wave simulation, decision-making, and computational drug discovery engine running continuously in the GitHub cloud environment. It is built upon the foundational principles of **Sine-Wave Universality** and **Null-Infinite Duality** ($0 = \infty$).
+**Vyom Sutra (व्योम सूत्र)** is a high-performance, autonomous 64-bit harmonic wave simulation, decision-making, and computational drug discovery engine running continuously in the GitHub cloud environment. It is built upon the foundational principles of **Sine-Wave Universality** and **Null-Infinite Duality** ($0 = \infty$).
 
 ---
 
