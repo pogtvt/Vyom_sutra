@@ -2,102 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Badminton Physics Simulation | Vyom Sutra</title>
+    <title>Infinite Physics Badminton Rally</title>
     <style>
-        body { background: #030712; color: #f3f4f6; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        h1 { color: #38bdf8; margin: 5px; font-size: 22px; }
-        canvas { background: #0f172a; border: 2px solid #38bdf8; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .score { font-size: 16px; color: #10b981; margin-bottom: 10px; }
+        body { margin: 0; background: #0f172a; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #f8fafc; }
+        canvas { background: linear-gradient(to bottom, #1e293b, #0f172a); border: 3px solid #3b82f6; box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); border-radius: 8px; }
     </style>
 </head>
 <body>
-    <h1>🏸 Badminton Physics Simulation Game</h1>
-    <div class="score">Score: <span id="scoreVal">0</span> | Use Mouse to Move Racket</div>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
-
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let shuttle = { x: 400, y: 150, vx: 5, vy: -2, gravity: 0.18 };
+        let p1 = { x: 100, y: 300, width: 16, height: 70, color: '#38bdf8' };
+        let p2 = { x: 684, y: 300, width: 16, height: 70, color: '#f43f5e' };
+        let rallyCount = 0;
 
-        let score = 0;
-        let shuttle = { x: 100, y: 150, vx: 4, vy: 2, radius: 8 };
-        let racket = { x: 700, y: 200, width: 15, height: 80 };
+        function resetShuttle(server) {
+            shuttle.x = server === 1 ? p1.x + 30 : p2.x - 30;
+            shuttle.y = 180;
+            shuttle.vx = server === 1 ? 5.5 : -5.5;
+            shuttle.vy = -4;
+        }
 
-        canvas.addEventListener("mousemove", (e) => {
-            const rect = canvas.getBoundingClientRect();
-            racket.y = e.clientY - rect.top - racket.height / 2;
-        });
-
-        function update() {
+        function updatePhysics() {
+            shuttle.vy += shuttle.gravity;
             shuttle.x += shuttle.vx;
             shuttle.y += shuttle.vy;
 
-            // Gravity wave effect
-            shuttle.vy += 0.08;
-
-            // Wall collisions (Top/Bottom)
-            if (shuttle.y < 10 || shuttle.y > canvas.height - 10) {
-                shuttle.vy *= -1;
+            if (shuttle.x < 400) {
+                p1.y += ((shuttle.y + 15) - p1.y) * 0.12;
+                p1.x = 100 + Math.sin(Date.now() * 0.004) * 25;
+            } else {
+                p1.y += (300 - p1.y) * 0.08;
             }
 
-            // Left wall bounce
-            if (shuttle.x < 10) {
+            if (shuttle.x >= 400) {
+                p2.y += ((shuttle.y + 15) - p2.y) * 0.12;
+                p2.x = 684 - Math.sin(Date.now() * 0.004) * 25;
+            } else {
+                p2.y += (300 - p2.y) * 0.08;
+            }
+
+            p1.y = Math.max(120, Math.min(310, p1.y));
+            p2.y = Math.max(120, Math.min(310, p2.y));
+
+            if (shuttle.x > 392 && shuttle.x < 408 && shuttle.y > 230) {
                 shuttle.vx *= -1;
+                shuttle.vy = -7;
             }
 
-            // Racket collision
-            if (
-                shuttle.x >= racket.x &&
-                shuttle.y >= racket.y &&
-                shuttle.y <= racket.y + racket.height
-            ) {
-                shuttle.vx *= -1.1; // Speed up slightly on hit
-                shuttle.vy += (Math.random() - 0.5) * 3;
-                score++;
-                document.getElementById("scoreVal").innerText = score;
+            if (shuttle.y >= 370) {
+                shuttle.y = 370;
+                rallyCount = 0;
+                resetShuttle(shuttle.x < 400 ? 2 : 1);
             }
 
-            // Miss check
-            if (shuttle.x > canvas.width) {
-                score = 0;
-                document.getElementById("scoreVal").innerText = score;
-                shuttle.x = 100;
-                shuttle.y = 150;
-                shuttle.vx = 4;
-                shuttle.vy = 2;
+            if (shuttle.x - 8 < p1.x + p1.width && shuttle.x + 8 > p1.x && shuttle.y - 8 < p1.y + p1.height && shuttle.y + 8 > p1.y) {
+                shuttle.vx = Math.abs(shuttle.vx) + 0.3;
+                shuttle.vy = -8.5 - Math.random() * 2;
+                rallyCount++;
+            }
+
+            if (shuttle.x - 8 < p2.x + p2.width && shuttle.x + 8 > p2.x && shuttle.y - 8 < p2.y + p2.height && shuttle.y + 8 > p2.y) {
+                shuttle.vx = -(Math.abs(shuttle.vx) + 0.3);
+                shuttle.vy = -8.5 - Math.random() * 2;
+                rallyCount++;
             }
         }
 
-        function draw() {
+        function renderGraphics() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Net
-            ctx.strokeStyle = "#38bdf8";
-            ctx.setLineDash([5, 5]);
-            ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 0);
-            ctx.lineTo(canvas.width / 2, canvas.height);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Draw Shuttlecock
-            ctx.fillStyle = "#10b981";
-            ctx.beginPath();
-            ctx.arc(shuttle.x, shuttle.y, shuttle.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Draw Racket
-            ctx.fillStyle = "#a855f7";
-            ctx.fillRect(racket.x, racket.y, racket.width, racket.height);
+            ctx.fillStyle = '#334155'; ctx.fillRect(0, 370, canvas.width, 30);
+            ctx.fillStyle = '#e2e8f0'; ctx.fillRect(397, 220, 6, 150);
+            ctx.fillStyle = p1.color; ctx.fillRect(p1.x, p1.y, p1.width, p1.height);
+            ctx.fillStyle = p2.color; ctx.fillRect(p2.x, p2.y, p2.width, p2.height);
+            ctx.beginPath(); ctx.arc(shuttle.x, shuttle.y, 7, 0, Math.PI * 2); ctx.fillStyle = '#facc15'; ctx.fill(); ctx.closePath();
+            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 18px sans-serif'; ctx.fillText('Infinite Physics Rally: ' + rallyCount, 25, 35);
         }
 
-        function loop() {
-            update();
-            draw();
-            requestAnimationFrame(loop);
-        }
-
-        loop();
+        function gameLoop() { updatePhysics(); renderGraphics(); requestAnimationFrame(gameLoop); }
+        gameLoop();
     </script>
 </body>
 </html>
