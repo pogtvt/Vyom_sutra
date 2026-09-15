@@ -1,0 +1,32 @@
+name: Vyom Sutra Cloud Engine
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # हरेक ५-५ मिनेटमा क्लाउडमा अटोमेटिक चल्नेछ
+  workflow_dispatch:      # गिथब पेजबाटै क्लिक गरेर इन्स्ट्यान्ट रन गर्ने बटन
+
+permissions:
+  contents: write
+
+jobs:
+  run-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run Vyom Discovery Engine
+        run: python run_engine.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "Vyom Cloud Bot"
+          git config --global user.email "bot@vyom.sutra"
+          git add discoveries.json
+          git diff --staged --quiet || git commit -m "Cloud Engine: Auto-generated discoveries update"
+          git push
