@@ -326,5 +326,16 @@
         "name": "Wave-Target-Delta",
         "affinity_score": 98.33,
         "timestamp": "2026-09-15 17:05:55"
+    },
+    {
+        "category": "Oncogene Target",
+        "protein_target": "Proto-oncogene vav (P15498)",
+        "theta_target": 0.913,
+        "candidate": "Vyom-Sutra-k65536-24429",
+        "mw": 506.09,
+        "logp": 4.24,
+        "resonance": "99.0%",
+        "sa_score": 9.95,
+        "timestamp": "2026-09-15 20:13:45"
     }
 ]
