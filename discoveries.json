@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-49806720",
+        "name": "Alectinib (ALK)",
+        "mw": 483.6,
+        "logp": 4.6,
+        "phase_angle": 1.5239,
+        "c_mu_nu": 13.21,
+        "affinity_score": 86.68,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:53:57"
+    },
+    {
         "id": "CID-138338662",
         "name": "Sotorasib (KRAS G12C)",
         "mw": 560.6,
