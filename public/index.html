@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vyom Sutra: Cyber Beat Saber AI with Synthesized Audio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="900" height="550"></canvas>
+        
+        <div id="start-overlay">
+            <h1 style="color: #00ffcc; margin-bottom: 15px; text-shadow: 0 0 10px #00ffcc;">VYOM SUTRA CYBER ENGINE</h1>
+            <button id="start-btn" onclick="initAudioAndStart()">START SIMULATION & AUDIO 🔊</button>
+        </div>
+
+        <!-- VYOM SUTRA MATHEMATICAL HUD -->
+        <div class="hud-panel hud-left">
+            <div style="color: #fff; font-size: 12px; font-weight: bold; border-bottom: 1px solid #00ffcc; padding-bottom:4px; margin-bottom:6px;">
+                VYOM SUTRA MATH CORE (Eq. 2.1)
+            </div>
+            <div>Phase Angle (&theta;): <span id="thetaVal" style="color:#00ffcc;">0.00 rad</span></div>
+            <div>Phase Diff (<i>d</i>): <span id="diffVal">0.000</span></div>
+            <div>Similarity Score (<i>S</i>): <span id="scoreSVal" style="font-size:13px; font-weight:bold; color:#fff;">100.00%</span></div>
+            <div>Audio Phase Modulation: <span id="audioModVal">SYNCED</span></div>
+            <div>Verdict: <span id="verdictBox" class="verdict-tag excellent">EXCELLENT</span></div>
+        </div>
+
+        <div class="hud-panel hud-right">
+            <div>ACCURACY: <span id="accuracyVal" style="font-size: 18px; font-weight: bold; color:#00ffcc;">100.0%</span></div>
+            <div>SCORE: <span id="scoreVal" style="font-size: 16px; font-weight: bold; color:#fff;">0</span></div>
+            <div>COMBO STREAK: <span id="comboVal">0x</span></div>
+            <div>SLICED BLOCKS: <span id="sliceVal">0</span></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn" onclick="toggleAudio()">Toggle Audio (ON/OFF)</button>
+        <button class="ctrl-btn" onclick="resetGame()">Reset Engine</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

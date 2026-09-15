@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vyom Sutra: Universal Sine-Wave Hierarchy</title>
+    <style>
+        body { 
+            margin: 0; 
+            background: #030712; 
+            color: #f8fafc; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+        .container { 
+            width: 92%; 
+            max-width: 900px; 
+            background: #0b0f19; 
+            border: 2px solid #1e293b; 
+            border-radius: 14px; 
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.15); 
+            padding: 24px; 
+        }
+        h1 { 
+            font-size: 21px; 
+            text-align: center; 
+            margin-bottom: 6px; 
+            color: #38bdf8; 
+            letter-spacing: 0.5px; 
+        }
+        .subtitle { 
+            text-align: center; 
+            font-size: 12px; 
+            color: #94a3b8; 
+            margin-bottom: 20px; 
+            line-height: 1.5; 
+        }
+        .status-box { 
+            background: #111827; 
+            border-left: 5px solid #38bdf8; 
+            padding: 14px 18px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            transition: all 0.3s ease; 
+        }
+        .status-box div { 
+            margin: 5px 0; 
+            font-size: 14px; 
+        }
+        canvas { 
+            width: 100%; 
+            height: 260px; 
+            background: #030712; 
+            border-radius: 10px; 
+            border: 1px solid #1f2937; 
+            display: block; 
+            margin-bottom: 20px; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8); 
+        }
+        .controls { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            margin-bottom: 20px; 
+        }
+        @media(max-width: 700px) { 
+            .controls { grid-template-columns: 1fr; } 
+        }
+        .control-group { 
+            background: #111827; 
+            padding: 14px; 
+            border-radius: 8px; 
+            border: 1px solid #1f2937; 
+        }
+        .control-group label { 
+            font-size: 13px; 
+            color: #cbd5e1; 
+            display: block; 
+            margin-bottom: 8px; 
+        }
+        input[type=range] { 
+            width: 100%; 
+            accent-color: #38bdf8; 
+            cursor: pointer; 
+        }
+        .btn-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 8px; 
+        }
+        button { 
+            background: #1e293b; 
+            color: #f8fafc; 
+            border: 1px solid #334155; 
+            padding: 10px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: 600; 
+            transition: all 0.2s; 
+        }
+        button:hover { 
+            background: #334155; 
+            border-color: #475569; 
+        }
+        button.active { 
+            background: #38bdf8; 
+            border-color: #7dd3fc; 
+            color: #030712; 
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); 
+            font-weight: 700; 
+        }
+        .metrics-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            text-align: center; 
+        }
+        @media(max-width: 700px) { 
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); } 
+        }
+        .metric-card { 
+            background: #111827; 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid #1f2937; 
+        }
+        .metric-card span { 
+            display: block; 
+            font-size: 11px; 
+            color: #94a3b8; 
+            margin-bottom: 6px; 
+            letter-spacing: 0.5px; 
+        }
+        .metric-card strong { 
+            font-size: 13px; 
+            color: #f1f5f9; 
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Vyom Sutra: Universal Sine-Wave Hierarchy</h1>
+    <div class="subtitle">All States are Unified Sine-Wave Manifestations: Black Hole ⇌ Particle ⇌ Gravity ⇌ Dark Energy</div>
+
+    <div class="status-box" id="statusBox">
+        <div><strong>State:</strong> <span id="stateName">Dark Energy (Ultra-Long wavelength)</span></div>
+        <div><strong>Definition:</strong> <span id="stateDef">Ultra-Long Wavelength -> Undetectable Wave Field</span></div>
+    </div>
+
+    <canvas id="waveCanvas"></canvas>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Wave Frequency / Compression: <span id="freqVal">1.0</span> Hz</label>
+            <input type="range" id="freqSlider" min="0.2" max="25" step="0.1" value="1.0">
+            <label style="margin-top: 12px;">Wave Spread (Amplitude): <span id="ampVal">50</span></label>
+            <input type="range" id="ampSlider" min="10" max="90" step="1" value="50">
+        </div>
+        <div class="control-group">
+            <label>Select Wave Hierarchy State:</label>
+            <div class="btn-grid">
+                <button onclick="setMode('dark', 1.2)" id="btn-dark" class="active">Dark Energy</button>
+                <button onclick="setMode('gravity', 3.8)" id="btn-gravity">Gravity</button>
+                <button onclick="setMode('particle', 8.5)" id="btn-particle">Particle State</button>
+                <button onclick="setMode('bh', 21.0)" id="btn-bh">Black Hole</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <span>WAVE STATE</span>
+            <strong id="mState">Dark Energy</strong>
+        </div>
+        <div class="metric-card">
+            <span>WAVELENGTH SCALE</span>
+            <strong id="mScale">Ultra-Long</strong>
+        </div>
+        <div class="metric-card">
+            <span>DETECTION STATUS</span>
+            <strong id="mDetect">Undetectable</strong>
+        </div>
+        <div class="metric-card">
+            <span>TOPOLOGY</span>
+            <strong id="mTopo">0 ⇌ Loop</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('waveCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let freqSlider = document.getElementById('freqSlider');
+    let freqVal = document.getElementById('freqVal');
+    let ampSlider = document.getElementById('ampSlider');
+    let ampVal = document.getElementById('ampVal');
+    
+    let time = 0;
+    const uniformColor = "#38bdf8";
+
+    const states = [
+        { key: 'dark', maxFreq: 2.5, name: "Dark Energy (Ultra-Long wavelength)", short: "Dark Energy", def: "Ultra-Long Wavelength -> Undetectable Wave Field", scale: "Ultra-Long", detect: "Undetectable", topo: "0 ⇌ Loop" },
+        { key: 'gravity', maxFreq: 6.0, name: "Gravity (Very Weak Force Field)", short: "Gravity", def: "Very weak Force Field (Subtle Curvature)", scale: "Medium Hz", detect: "Measurable", topo: "0 ⇌ Loop" },
+    { key: 'particle', maxFreq: 15.0, name: "Particle State (Standard Propagation)", short: "Particle State", def: "Standard Wave Propagation & Observation", scale: "Standard Hz", detect: "Observable", topo: "0 ⇌ Loop" },
+        { key: 'bh', maxFreq: 25.0, name: "Black Hole (Packed Sine Waves)", short: "Black Hole", def: "Packed Sine Waves (Extreme Compression)", scale: "Packed Sine", detect: "Extreme Comp.", topo: "0 ⇌ Loop" }
+    ];
+
+    function updateUI(freq) {
+        let current = states.find(s => freq <= s.maxFreq) || states[states.length - 1];
+
+        document.getElementById('stateName').innerText = current.name;
+        document.getElementById('stateDef').innerText = current.def;
+        document.getElementById('mState').innerText = current.short;
+        document.getElementById('mScale').innerText = current.scale;
+        document.getElementById('mDetect').innerText = current.detect;
+        document.getElementById('mTopo').innerText = current.topo;
+
+        document.querySelectorAll('.btn-grid button').forEach(b => b.classList.remove('active'));
+        let activeBtn = document.getElementById('btn-' + current.key);
+        if(activeBtn) activeBtn.classList.add('active');
+    }
+
+    function setMode(key, freqValTarget) {
+        freqSlider.value = freqValTarget;
+        freqVal.innerText = freqValTarget;
+        updateUI(freqValTarget);
+    }
+
+    freqSlider.addEventListener('input', (e) => {
+        let val = parseFloat(e.target.value);
+        freqVal.innerText = val;
+        updateUI(val);
+    });
+
+    ampSlider.addEventListener('input', (e) => {
+        ampVal.innerText = e.target.value;
+    });
+
+    function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth - 48;
+        canvas.height = 260;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function drawWave() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = '#111827';
+        ctx.lineWidth = 1;
+        for(let i = 0; i < canvas.width; i += 45) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+        for(let j = 0; j < canvas.height; j += 45) {
+            ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+        }
+
+        let freq = parseFloat(freqSlider.value);
+        let amp = parseFloat(ampSlider.value);
+
+        ctx.beginPath();
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = uniformColor;
+        
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = uniformColor;
+
+        let centerY = canvas.height / 2;
+        for (let x = 0; x < canvas.width; x++) {
+            let y = centerY + Math.sin((x * 0.018 * freq) + time) * amp * (freq / 6 > 1 ? 1 : freq/6);
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        time += 0.04 * (freq * 0.35);
+        requestAnimationFrame(drawWave);
+    }
+
+    drawWave();
+</script>
+</body>
+</html>

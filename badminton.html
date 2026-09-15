@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Infinite Physics Badminton Rally</title>
+    <style>
+        body { margin: 0; background: #0f172a; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #f8fafc; }
+        canvas { background: linear-gradient(to bottom, #1e293b, #0f172a); border: 3px solid #3b82f6; box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let shuttle = { x: 400, y: 150, vx: 5, vy: -2, gravity: 0.18 };
+        let p1 = { x: 100, y: 300, width: 16, height: 70, color: '#38bdf8' };
+        let p2 = { x: 684, y: 300, width: 16, height: 70, color: '#f43f5e' };
+        let rallyCount = 0;
+
+        function resetShuttle(server) {
+            shuttle.x = server === 1 ? p1.x + 30 : p2.x - 30;
+            shuttle.y = 180;
+            shuttle.vx = server === 1 ? 5.5 : -5.5;
+            shuttle.vy = -4;
+        }
+
+        function updatePhysics() {
+            shuttle.vy += shuttle.gravity;
+            shuttle.x += shuttle.vx;
+            shuttle.y += shuttle.vy;
+
+            if (shuttle.x < 400) {
+                p1.y += ((shuttle.y + 15) - p1.y) * 0.12;
+                p1.x = 100 + Math.sin(Date.now() * 0.004) * 25;
+            } else {
+                p1.y += (300 - p1.y) * 0.08;
+            }
+
+            if (shuttle.x >= 400) {
+                p2.y += ((shuttle.y + 15) - p2.y) * 0.12;
+                p2.x = 684 - Math.sin(Date.now() * 0.004) * 25;
+            } else {
+                p2.y += (300 - p2.y) * 0.08;
+            }
+
+            p1.y = Math.max(120, Math.min(310, p1.y));
+            p2.y = Math.max(120, Math.min(310, p2.y));
+
+            if (shuttle.x > 392 && shuttle.x < 408 && shuttle.y > 230) {
+                shuttle.vx *= -1;
+                shuttle.vy = -7;
+            }
+
+            if (shuttle.y >= 370) {
+                shuttle.y = 370;
+                rallyCount = 0;
+                resetShuttle(shuttle.x < 400 ? 2 : 1);
+            }
+
+            if (shuttle.x - 8 < p1.x + p1.width && shuttle.x + 8 > p1.x && shuttle.y - 8 < p1.y + p1.height && shuttle.y + 8 > p1.y) {
+                shuttle.vx = Math.abs(shuttle.vx) + 0.3;
+                shuttle.vy = -8.5 - Math.random() * 2;
+                rallyCount++;
+            }
+
+            if (shuttle.x - 8 < p2.x + p2.width && shuttle.x + 8 > p2.x && shuttle.y - 8 < p2.y + p2.height && shuttle.y + 8 > p2.y) {
+                shuttle.vx = -(Math.abs(shuttle.vx) + 0.3);
+                shuttle.vy = -8.5 - Math.random() * 2;
+                rallyCount++;
+            }
+        }
+
+        function renderGraphics() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#334155'; ctx.fillRect(0, 370, canvas.width, 30);
+            ctx.fillStyle = '#e2e8f0'; ctx.fillRect(397, 220, 6, 150);
+            ctx.fillStyle = p1.color; ctx.fillRect(p1.x, p1.y, p1.width, p1.height);
+            ctx.fillStyle = p2.color; ctx.fillRect(p2.x, p2.y, p2.width, p2.height);
+            ctx.beginPath(); ctx.arc(shuttle.x, shuttle.y, 7, 0, Math.PI * 2); ctx.fillStyle = '#facc15'; ctx.fill(); ctx.closePath();
+            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 18px sans-serif'; ctx.fillText('Infinite Physics Rally: ' + rallyCount, 25, 35);
+        }
+
+        function gameLoop() { updatePhysics(); renderGraphics(); requestAnimationFrame(gameLoop); }
+        gameLoop();
+    </script>
+</body>
+</html>

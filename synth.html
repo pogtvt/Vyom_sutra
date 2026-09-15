@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vyom Wave Synthesizer | Vyom Sutra</title>
+    <style>
+        body { background: #030712; color: #f3f4f6; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: height: 100vh; margin: 0; padding: 20px; }
+        h1 { color: #38bdf8; margin-bottom: 5px; }
+        .synth-box { background: rgba(15, 23, 42, 0.9); border: 1px solid #38bdf8; border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; max-width: 500px; width: 100%; }
+        .control-group { margin: 20px 0; }
+        label { display: block; margin-bottom: 8px; color: #a855f7; }
+        input[type=range] { width: 100%; accent-color: #38bdf8; }
+        button { background: #38bdf8; color: #030712; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: monospace; font-size: 14px; transition: 0.2s; }
+        button:hover { background: #0ea5e9; box-shadow: 0 0 15px #38bdf8; }
+        .keys { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+        .key { background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 15px 10px; cursor: pointer; border-radius: 6px; font-weight: bold; }
+        .key:hover { background: #38bdf8; color: #030712; }
+    </style>
+</head>
+<body>
+    <div class="synth-box">
+        <h1>🎛️ Vyom Wave Synthesizer</h1>
+        <p style="font-size: 12px; color: #94a3b8;">Powered by Web Audio API & Sine-Wave Universality ($0 = \infty$)</p>
+        
+        <div class="control-group">
+            <label>Frequency (Hz): <span id="freq-val">440</span> Hz</label>
+            <input type="range" id="freqRange" min="100" max="1000" value="440" oninput="updateFreq(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label>Waveform</label>
+            <select id="waveType" style="background:#1e293b; color:#38bdf8; border:1px solid #38bdf8; padding:8px; border-radius:6px; width:100%; font-family:monospace;">
+                <option value="sine">Sine Wave (Harmonic)</option>
+                <option value="square">Square Wave (Digital)</option>
+                <option value="sawtooth">Sawtooth Wave (Aggressive)</option>
+                <option value="triangle">Triangle Wave (Soft)</option>
+            </select>
+        </div>
+
+        <button onclick="toggleSound()" id="playBtn">▶ Start Synth Engine</button>
+
+        <div class="keys">
+            <div class="key" onclick="playNote(261.63)">C4</div>
+            <div class="key" onclick="playNote(293.66)">D4</div>
+            <div class="key" onclick="playNote(329.63)">E4</div>
+            <div class="key" onclick="playNote(349.23)">F4</div>
+            <div class="key" onclick="playNote(392.00)">G4</div>
+        </div>
+    </div>
+
+    <script>
+        let audioCtx = null;
+        let osc = null;
+        let gainNode = null;
+        let isPlaying = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            initAudio();
+            const btn = document.getElementById("playBtn");
+            if (!isPlaying) {
+                osc = audioCtx.createOscillator();
+                gainNode = audioCtx.createGain();
+                
+                osc.type = document.getElementById("waveType").value;
+                osc.frequency.setValueAtTime(parseFloat(document.getElementById("freqRange").value), audioCtx.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start();
+                isPlaying = true;
+                btn.innerText = "⏹ Stop Synth Engine";
+                btn.style.background = "#ef4444";
+            } else {
+                osc.stop();
+                osc.disconnect();
+                isPlaying = false;
+                btn.innerText = "▶ Start Synth Engine";
+                btn.style.background = "#38bdf8";
+            }
+        }
+
+        function updateFreq(val) {
+            document.getElementById("freq-val").innerText = val;
+            if (isPlaying && osc) {
+                osc.frequency.setValueAtTime(parseFloat(val), audioCtx.currentTime);
+            }
+        }
+
+        function playNote(freq) {
+            initAudio();
+            let tempOsc = audioCtx.createOscillator();
+            let tempGain = audioCtx.createGain();
+            tempOsc.type = document.getElementById("waveType").value;
+            tempOsc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            tempGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            tempGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+            tempOsc.connect(tempGain);
+            tempGain.connect(audioCtx.destination);
+            tempOsc.start();
+            tempOsc.stop(audioCtx.currentTime + 0.8);
+        }
+    </script>
+</body>
+</html>

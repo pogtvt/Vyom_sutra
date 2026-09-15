@@ -1,0 +1,2262 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sutra Free Fire Ultra Battle Royale - Dynamic AI & Vehicle Collision Engine</title>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            touch-action: none; 
+        }
+        body, html { 
+            background: #020617; 
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace; 
+            overflow: hidden; 
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0; left: 0;
+        }
+
+        #game-container { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100vw; height: 100vh; 
+            background: #000;
+            overflow: hidden;
+        }
+
+        canvas { 
+            background: #030712; 
+            width: 100vw; height: 100vh; 
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        /* MINI MAP CANVAS OVERLAY */
+        #minimap-container {
+            position: absolute;
+            top: calc(10px + env(safe-area-inset-top));
+            right: calc(10px + env(safe-area-inset-right));
+            width: 130px;
+            height: 130px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid #00f2fe;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 1000;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            pointer-events: none;
+        }
+        #minimapCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ULTRA TRANSPARENT JOYSTICK */
+        #joystick-container {
+            position: absolute;
+            bottom: calc(20px + env(safe-area-inset-bottom));
+            left: calc(20px + env(safe-area-inset-left));
+            width: 130px;
+            height: 130px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid rgba(0, 242, 254, 0.3);
+            border-radius: 50%;
+            touch-action: none;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        #joystick-knob {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.6) 0%, rgba(2, 132, 199, 0.3) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            position: absolute;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        /* HUD TOP CORNER PANELS */
+        .hud-panel {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            border-radius: 10px;
+            padding: 6px 12px;
+            backdrop-filter: blur(6px);
+            z-index: 900;
+        }
+
+        #hud-top-left {
+            top: calc(10px + env(safe-area-inset-top));
+            left: calc(10px + env(safe-area-inset-left));
+            width: 200px;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(2, 6, 23, 0.8);
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.15);
+            margin: 2px 0 4px 0;
+            overflow: hidden;
+        }
+        .bar-fill { height: 100%; width: 100%; transition: width 0.1s linear; }
+        #hp-fill { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        #ep-fill { background: linear-gradient(90deg, #f59e0b, #fde047); }
+        #ghost-fill { background: linear-gradient(90deg, #a855f7, #c084fc); }
+        #chaos-bar-fill { background: linear-gradient(90deg, #ec4899, #ef4444); width: 0%; }
+
+        .hud-text-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            font-weight: 800;
+            color: rgba(226, 232, 240, 0.95);
+        }
+
+        #hud-top-center {
+            position: absolute;
+            top: calc(10px + env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            z-index: 900;
+        }
+
+        .hud-badge-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .hud-badge {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(250, 204, 21, 0.6);
+            color: #facc15;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 10px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
+
+        /* DYNAMIC AI GAME DIRECTOR HUD PANEL */
+        #ai-director-panel {
+            position: absolute;
+            top: calc(150px + env(safe-area-inset-top));
+            left: calc(10px + env(safe-area-inset-left));
+            width: 220px;
+            background: rgba(2, 6, 23, 0.85);
+            border: 1px dashed #ec4899;
+            border-radius: 10px;
+            padding: 8px 10px;
+            z-index: 900;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 0 12px rgba(236, 72, 153, 0.3);
+        }
+        .ai-title {
+            font-size: 10px; font-weight: 900; color: #ec4899; text-transform: uppercase;
+            letter-spacing: 1px; display: flex; justify-content: space-between; margin-bottom: 4px;
+        }
+
+        /* KILL FEED DISPLAY */
+        #kill-feed {
+            position: absolute;
+            top: calc(150px + env(safe-area-inset-top));
+            right: calc(10px + env(safe-area-inset-right));
+            width: 220px;
+            max-height: 140px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 900;
+        }
+        .kill-msg {
+            background: rgba(15, 23, 42, 0.85);
+            border-left: 4px solid #ef4444;
+            color: #f87171;
+            font-size: 9px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: 800;
+            animation: fadeIn 0.2s ease-in;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+
+        /* WEAPON QUICK BAR */
+        #weapon-bar {
+            position: absolute;
+            bottom: calc(15px + env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.75);
+            padding: 5px 10px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(0,242,254,0.4);
+            backdrop-filter: blur(6px);
+        }
+        .wpn-slot {
+            padding: 6px 12px;
+            font-size: 10px;
+            font-weight: 800;
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .wpn-slot.active {
+            background: rgba(0, 242, 254, 0.4);
+            color: #00f2fe;
+            border: 1px solid #00f2fe;
+            box-shadow: 0 0 10px rgba(0,242,254,0.5);
+        }
+
+        /* SUTRA QUANTUM STATS DISPLAY */
+        #sutra-hud-matrix {
+            background: rgba(2, 6, 23, 0.8);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            border-radius: 12px;
+            padding: 3px 12px;
+            font-size: 8.5px;
+            color: #c084fc;
+            font-weight: 800;
+            pointer-events: none;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* CONTROLS BUTTONS */
+        .touch-btn {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(0, 242, 254, 0.4);
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            opacity: 0.85;
+            transition: opacity 0.1s, transform 0.08s;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+        }
+        .touch-btn:active, .touch-btn.active {
+            background: rgba(0, 242, 254, 0.5);
+            color: #fff;
+            opacity: 1;
+            transform: scale(0.9);
+        }
+
+        .btn-counter {
+            position: absolute;
+            top: -4px; right: -4px;
+            background: #ef4444; color: #fff;
+            font-size: 9px; font-weight: 900;
+            padding: 1px 5px; border-radius: 10px;
+            border: 1px solid #fff;
+        }
+
+        /* LEFT SIDE CONTROLS */
+        #btn-gloo     { bottom: calc(20px + env(safe-area-inset-bottom)); left: calc(160px + env(safe-area-inset-left)); width: 56px; height: 56px; border-color: rgba(56, 189, 248, 0.8); color: #38bdf8; font-size: 22px; }
+        #btn-medkit   { bottom: calc(85px + env(safe-area-inset-bottom)); left: calc(160px + env(safe-area-inset-left)); width: 50px; height: 50px; border-color: rgba(34, 197, 94, 0.8); color: #22c55e; font-size: 20px; }
+
+        /* RIGHT SIDE CONTROLS */
+        #btn-shoot    { bottom: calc(20px + env(safe-area-inset-bottom)); right: calc(20px + env(safe-area-inset-right)); width: 85px; height: 85px; border-color: rgba(239, 68, 68, 0.85); color: rgba(239, 68, 68, 1); font-size: 38px; opacity: 0.9; }
+        #btn-jump     { bottom: calc(115px + env(safe-area-inset-bottom)); right: calc(20px + env(safe-area-inset-right)); width: 48px; height: 48px; font-size: 20px; }
+        #btn-crouch   { bottom: calc(172px + env(safe-area-inset-bottom)); right: calc(20px + env(safe-area-inset-right)); width: 46px; height: 46px; font-size: 18px; }
+        
+        #btn-scope    { bottom: calc(20px + env(safe-area-inset-bottom)); right: calc(115px + env(safe-area-inset-right)); width: 54px; height: 54px; border-color: rgba(16, 185, 129, 0.7); color: #10b981; font-size: 22px; }
+        #btn-reload   { bottom: calc(85px + env(safe-area-inset-bottom)); right: calc(105px + env(safe-area-inset-right)); width: 46px; height: 46px; border-color: rgba(234, 179, 8, 0.7); color: #eab308; font-size: 18px; }
+        #btn-skill    { bottom: calc(142px + env(safe-area-inset-bottom)); right: calc(95px + env(safe-area-inset-right)); width: 50px; height: 50px; border-color: rgba(168, 85, 247, 0.8); color: #a855f7; font-size: 22px; }
+
+        /* INTERACTION BUTTONS */
+        #btn-car-enter{ top: calc(255px + env(safe-area-inset-top)); left: calc(10px + env(safe-area-inset-left)); width: 46px; height: 46px; border-color: rgba(250, 204, 21, 0.8); color: #facc15; font-size: 20px; }
+        #btn-door     { top: calc(310px + env(safe-area-inset-top)); left: calc(10px + env(safe-area-inset-left)); width: 46px; height: 46px; border-color: rgba(236, 72, 153, 0.8); color: #ec4899; font-size: 20px; }
+
+        /* VEHICLE HUD CONTROLS */
+        .vehicle-ctrl { display: none; }
+        #btn-gas      { bottom: calc(85px + env(safe-area-inset-bottom)); right: calc(25px + env(safe-area-inset-right)); width: 68px; height: 68px; border-color: rgba(34, 197, 94, 0.8); color: #22c55e; font-size: 28px; }
+        #btn-brake    { bottom: calc(15px + env(safe-area-inset-bottom)); right: calc(25px + env(safe-area-inset-right)); width: 62px; height: 62px; border-color: rgba(239, 68, 68, 0.8); color: #ef4444; font-size: 24px; }
+        #btn-steer-l  { bottom: calc(25px + env(safe-area-inset-bottom)); left: calc(25px + env(safe-area-inset-left)); width: 62px; height: 62px; font-size: 24px; }
+        #btn-steer-r  { bottom: calc(25px + env(safe-area-inset-bottom)); left: calc(98px + env(safe-area-inset-left)); width: 62px; height: 62px; font-size: 24px; }
+
+        /* SCOPE OVERLAY */
+        #scope-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 850;
+        }
+
+        /* MODAL SCREEN */
+        #game-modal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(3, 7, 18, 0.93);
+            backdrop-filter: blur(14px);
+            z-index: 2000;
+            flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .modal-box {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #00f2fe;
+            border-radius: 18px;
+            padding: 24px 32px;
+            box-shadow: 0 0 50px rgba(0, 242, 254, 0.5);
+            max-width: 440px; width: 90%;
+        }
+        .modal-title { font-size: 34px; font-weight: 900; margin-bottom: 6px; letter-spacing: 2px; }
+        .win-title { color: #facc15; text-shadow: 0 0 20px rgba(250, 204, 21, 0.8); }
+        .lose-title { color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+        .stat-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
+        
+        .retry-btn {
+            margin-top: 20px; padding: 14px 32px;
+            font-size: 16px; font-weight: bold; color: #030712;
+            background: linear-gradient(135deg, #00f2fe, #3b82f6);
+            border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+            transition: transform 0.1s;
+        }
+        .retry-btn:active { transform: scale(0.95); }
+
+        #loot-toast {
+            position: absolute; bottom: 95px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.92);
+            border: 1px solid #38bdf8; color: #38bdf8;
+            padding: 6px 16px; border-radius: 20px;
+            font-weight: bold; font-size: 12px;
+            display: none; z-index: 1100; backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gtaCanvas"></canvas>
+
+    <!-- MINI MAP RADAR OVERLAY -->
+    <div id="minimap-container">
+        <canvas id="minimapCanvas"></canvas>
+    </div>
+
+    <!-- SCOPE OVERLAY -->
+    <svg id="scope-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(0, 242, 254, 0.7)" stroke-width="0.8"/>
+        <line x1="50" y1="0" x2="50" y2="100" stroke="rgba(239, 68, 68, 0.85)" stroke-width="0.4"/>
+        <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(239, 68, 68, 0.85)" stroke-width="0.4"/>
+        <circle cx="50" cy="50" r="1.8" fill="#ef4444"/>
+    </svg>
+
+    <!-- TOP LEFT HUD -->
+    <div id="hud-top-left" class="hud-panel">
+        <div class="hud-text-row"><span>HEALTH (HP)</span><span id="hp-text">300/300</span></div>
+        <div class="bar-container"><div id="hp-fill" class="bar-fill"></div></div>
+
+        <div class="hud-text-row"><span>ENERGY (EP)</span><span id="ep-text">200/200</span></div>
+        <div class="bar-container"><div id="ep-fill" class="bar-fill"></div></div>
+
+        <div class="hud-text-row"><span>SUTRA GHOST (C_uv)</span><span id="ghost-text">100% SHIELD</span></div>
+        <div class="bar-container"><div id="ghost-fill" class="bar-fill"></div></div>
+    </div>
+
+    <!-- TOP CENTER HUD BADGES & SUTRA MATRIX -->
+    <div id="hud-top-center">
+        <div class="hud-badge-row">
+            <div class="hud-badge" id="badge-zone" style="border-color:#38bdf8; color:#38bdf8;">ZONE: 120s</div>
+            <div class="hud-badge" id="badge-alive">ALIVE: 20</div>
+            <div class="hud-badge" id="badge-kills" style="border-color:#ef4444; color:#ef4444;">KILLS: 0</div>
+        </div>
+        <div id="sutra-hud-matrix">
+            SUTRA MATRIX: <span id="sutra-k-val" style="color:#00f2fe;">k=64 Tiers</span> | Phase: <span id="sutra-theta-val" style="color:#facc15;">θ=0.85 rad</span>
+        </div>
+    </div>
+
+    <!-- SUTRA DYNAMIC AI GAME DIRECTOR PANEL -->
+    <div id="ai-director-panel">
+        <div class="ai-title">
+            <span>🤖 SUTRA AI DIRECTOR</span>
+            <span id="ai-gen-label" style="color:#00f2fe;">GEN #1</span>
+        </div>
+        <div class="hud-text-row"><span>CHAOS ENTROPY</span><span id="ai-chaos-text" style="color:#ec4899;">12%</span></div>
+        <div class="bar-container"><div id="chaos-bar-fill" class="bar-fill"></div></div>
+        <div class="hud-text-row" style="margin-top: 3px; font-size:8px; color:#cbd5e1;">
+            STATE: <span id="ai-status-desc" style="color:#38bdf8;">LEARNING & OBSERVING</span>
+        </div>
+    </div>
+
+    <!-- KILL FEED DISPLAY -->
+    <div id="kill-feed"></div>
+
+    <!-- WEAPON QUICK BAR -->
+    <div id="weapon-bar">
+        <div class="wpn-slot active" id="slot-1" onclick="selectWeaponSlot(0)">MP40 ⚡</div>
+        <div class="wpn-slot" id="slot-2" onclick="selectWeaponSlot(1)">AK47 💥</div>
+        <div class="wpn-slot" id="slot-3" onclick="selectWeaponSlot(2)">M1887 🔴</div>
+        <div class="wpn-slot" id="slot-4" onclick="selectWeaponSlot(3)">AWM 🎯</div>
+    </div>
+
+    <div id="loot-toast">LOOTED ITEM 📦</div>
+
+    <div id="joystick-container">
+        <div id="joystick-knob"></div>
+    </div>
+
+    <!-- ON-FOOT CONTROLS -->
+    <div id="btn-shoot" class="touch-btn on-foot-ctrl">🔥</div>
+    <div id="btn-gloo" class="touch-btn on-foot-ctrl">🧊<span class="btn-counter" id="gloo-count">5</span></div>
+    <div id="btn-skill" class="touch-btn on-foot-ctrl">💫</div>
+    <div id="btn-medkit" class="touch-btn on-foot-ctrl">💊<span class="btn-counter" id="medkit-count">3</span></div>
+    <div id="btn-reload" class="touch-btn on-foot-ctrl">🔄</div>
+    <div id="btn-scope" class="touch-btn on-foot-ctrl">🎯</div>
+    <div id="btn-jump" class="touch-btn on-foot-ctrl">🦘</div>
+    <div id="btn-crouch" class="touch-btn on-foot-ctrl">🧎</div>
+
+    <!-- INTERACTION BUTTONS -->
+    <div id="btn-car-enter" class="touch-btn">🚗</div>
+    <div id="btn-door" class="touch-btn">🚪</div>
+
+    <!-- VEHICLE EXCLUSIVE CONTROLS -->
+    <div id="btn-gas" class="touch-btn vehicle-ctrl">🟢</div>
+    <div id="btn-brake" class="touch-btn vehicle-ctrl">🔴</div>
+    <div id="btn-steer-l" class="touch-btn vehicle-ctrl">⬅️</div>
+    <div id="btn-steer-r" class="touch-btn vehicle-ctrl">➡️</div>
+
+    <!-- WIN / LOSE MODAL -->
+    <div id="game-modal">
+        <div class="modal-box">
+            <div id="modal-heading" class="modal-title win-title">BOOYAH!</div>
+            <p id="modal-sub" style="color: #cbd5e1; margin-bottom: 14px; font-size: 12px;">तपाईँले सूत्र ब्याटल रोयाले एरेना जित्नुभएको छ!</p>
+            
+            <div class="stat-row"><span>कुल ड्यामेज (Damage):</span><b id="stat-damage" style="color: #facc15;">0</b></div>
+            <div class="stat-row"><span>कुल किल (Total Kills):</span><b id="stat-kills" style="color: #4ade80;">0</b></div>
+            <div class="stat-row"><span>प्रयोग गरिएका वाल:</span><b id="stat-walls" style="color: #38bdf8;">0</b></div>
+            <div class="stat-row"><span>सूत्र फेज उर्जा (Sutra Phase):</span><b id="stat-sutra" style="color: #c084fc;">100%</b></div>
+            <div class="stat-row"><span>AI इभोल्भ्ड जेनेरेसन:</span><b id="stat-ai-gen" style="color: #ec4899;">GEN #1</b></div>
+
+            <button class="retry-btn" onclick="restartGame()">पुन: प्रयास गर्नुहोस् (RETRY)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gtaCanvas');
+const ctx = canvas.getContext('2d');
+
+const minimapCanvas = document.getElementById('minimapCanvas');
+const miniCtx = minimapCanvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    minimapCanvas.width = 130;
+    minimapCanvas.height = 130;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const WORLD = { width: 7500, height: 7500 };
+const MAP_BOUNDS = { minX: 300, minY: 300, maxX: 7200, maxY: 7200 };
+
+// ---------------------------------------------------------
+// 1. SUTRA FRAMEWORK ADVANCED SPATIAL AUDIO SYNTHESIZER
+// ---------------------------------------------------------
+class SutraAudioEngine {
+    constructor() { 
+        this.ctx = null;
+        this.kResolution = 6;
+        this.phaseTheta = 0.85;
+    }
+    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+    playSutraSynthesizedGunshot(type, pan = 0) {
+        if (!this.ctx) return;
+        let now = this.ctx.currentTime;
+        let masterGain = this.ctx.createGain();
+        let panner = this.ctx.createStereoPanner ? this.ctx.createStereoPanner() : null;
+        
+        if (panner) {
+            panner.pan.setValueAtTime(Math.max(-1, Math.min(1, pan)), now);
+            masterGain.connect(panner);
+            panner.connect(this.ctx.destination);
+        } else {
+            masterGain.connect(this.ctx.destination);
+        }
+
+        let baseFreq = 160, duration = 0.15;
+        if (type === 'M1887') { baseFreq = 85; duration = 0.3; }
+        else if (type === 'AWM' || type.includes('AWM')) { baseFreq = 60; duration = 0.45; }
+        else if (type === 'AK47') { baseFreq = 165; duration = 0.16; }
+        else if (type === 'MP40') { baseFreq = 310; duration = 0.09; }
+
+        for (let j = 0; j < Math.min(4, this.kResolution); j++) {
+            let osc = this.ctx.createOscillator();
+            let gain = this.ctx.createGain();
+            let dyadicMultiplier = Math.pow(2, j);
+            let harmonicFreq = baseFreq * (1 + j * 0.5);
+            
+            osc.type = (j % 2 === 0) ? 'sawtooth' : 'triangle';
+            osc.frequency.setValueAtTime(harmonicFreq, now);
+            osc.frequency.exponentialRampToValueAtTime(20 * dyadicMultiplier, now + duration);
+
+            let phaseAmplitude = 0.25 / (j + 1) * Math.cos(this.phaseTheta);
+            gain.gain.setValueAtTime(Math.max(0.01, phaseAmplitude), now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+    }
+
+    playCrashSound() {
+        if (!this.ctx) return;
+        let now = this.ctx.currentTime;
+        let osc = this.ctx.createOscillator();
+        let gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.35);
+    }
+
+    playHitMarker() {
+        if (!this.ctx) return;
+        let now = this.ctx.currentTime;
+        let osc = this.ctx.createOscillator();
+        let gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1500, now);
+        osc.frequency.exponentialRampToValueAtTime(500, now + 0.05);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.05);
+    }
+
+    playSutraQuantumSkill() {
+        if (!this.ctx) return;
+        let now = this.ctx.currentTime;
+        let osc = this.ctx.createOscillator();
+        let gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(950, now + 0.4);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.4);
+    }
+
+    playGlooDeploy() {
+        if (!this.ctx) return;
+        let now = this.ctx.currentTime;
+        let osc = this.ctx.createOscillator();
+        let gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(700, now + 0.18);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.18);
+    }
+
+    playLootSound() {
+        if (!this.ctx) return;
+        let now = this.ctx.currentTime;
+        let osc = this.ctx.createOscillator();
+        let gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(550, now);
+        osc.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.12);
+    }
+
+    playChaosExplosion() {
+        if (!this.ctx) return;
+        let now = this.ctx.currentTime;
+        let osc = this.ctx.createOscillator();
+        let gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.6);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.6);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.6);
+    }
+}
+const sutraAudio = new SutraAudioEngine();
+
+// ---------------------------------------------------------
+// 2. WEAPONS DATABASE (DYNAMICALLY MUTATED BY AI DIRECTOR)
+// ---------------------------------------------------------
+const WEAPONS_DATABASE = [
+    { name: 'MP40 ⚡', fireRate: 5, damage: 28, speed: 30, maxClip: 32, autoLock: true },
+    { name: 'AK47 💥', fireRate: 9, damage: 48, speed: 32, maxClip: 30, autoLock: true },
+    { name: 'M1887 🔴', fireRate: 24, damage: 135, speed: 26, maxClip: 2, autoLock: true },
+    { name: 'AWM 🎯', fireRate: 42, damage: 250, speed: 45, maxClip: 5, autoLock: true }
+];
+
+// Global Game Variables
+let worldSpeedMultiplier = 1.0;
+let ambientHue = 0;
+
+// ---------------------------------------------------------
+// 3. CONTROLS & DUAL TOUCH INPUT SYSTEM
+// ---------------------------------------------------------
+const keys = {};
+let joystickVector = { x: 0, y: 0 };
+const joyContainer = document.getElementById('joystick-container');
+const joyKnob = document.getElementById('joystick-knob');
+
+function handleJoystick(touchX, touchY) {
+    const rect = joyContainer.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const maxRadius = rect.width / 2;
+
+    let dx = touchX - centerX, dy = touchY - centerY;
+    let distance = Math.hypot(dx, dy);
+
+    if (distance > maxRadius) {
+        dx = (dx / distance) * maxRadius;
+        dy = (dy / distance) * maxRadius;
+    }
+
+    joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+    joystickVector.x = dx / maxRadius;
+    joystickVector.y = dy / maxRadius;
+}
+
+function resetJoystick() {
+    joyKnob.style.transform = `translate(0px, 0px)`;
+    joystickVector = { x: 0, y: 0 };
+}
+
+joyContainer.addEventListener('touchstart', (e) => { sutraAudio.init(); handleJoystick(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+joyContainer.addEventListener('touchmove', (e) => { e.preventDefault(); handleJoystick(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+joyContainer.addEventListener('touchend', resetJoystick);
+joyContainer.addEventListener('touchcancel', resetJoystick);
+
+let lastTouchAim = null;
+window.addEventListener('touchstart', (e) => {
+    sutraAudio.init();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        let t = e.changedTouches[i];
+        if (t.clientX > window.innerWidth / 2) {
+            lastTouchAim = { x: t.clientX, y: t.clientY, id: t.identifier };
+        }
+    }
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        let t = e.changedTouches[i];
+        if (lastTouchAim && t.identifier === lastTouchAim.id) {
+            let dx = t.clientX - lastTouchAim.x;
+            player.angle += dx * 0.009;
+            lastTouchAim.x = t.clientX;
+            lastTouchAim.y = t.clientY;
+        }
+    }
+}, { passive: true });
+
+window.addEventListener('touchend', (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (lastTouchAim && e.changedTouches[i].identifier === lastTouchAim.id) lastTouchAim = null;
+    }
+});
+
+function setupButton(id, keyName, isInstant = false, callback = null) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+
+    const start = (e) => {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+        sutraAudio.init();
+        btn.classList.add('active');
+        if (isInstant && callback) callback();
+        else keys[keyName] = true;
+    };
+
+    const end = (e) => {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+        btn.classList.remove('active');
+        if (!isInstant) keys[keyName] = false;
+    };
+
+    btn.addEventListener('touchstart', start, { passive: false });
+    btn.addEventListener('touchend', end, { passive: false });
+    btn.addEventListener('mousedown', start);
+    btn.addEventListener('mouseup', end);
+    btn.addEventListener('mouseleave', end);
+}
+
+setupButton('btn-car-enter', 'f', true, () => toggleCarEnterExit());
+setupButton('btn-door', 'e', true, () => toggleHouseEnterExit());
+setupButton('btn-shoot', ' ', true, () => playerShoot());
+setupButton('btn-gloo', 'g', true, () => deployPlayerGlooWall());
+setupButton('btn-skill', 'k', true, () => activateSutraQuantumSkill());
+setupButton('btn-medkit', 'h', true, () => healPlayer());
+setupButton('btn-reload', 'r', true, () => reloadPlayerWeapon());
+setupButton('btn-scope', 'shift', true, () => toggleScopeView());
+setupButton('btn-jump', 'jump', true, () => playerJump());
+setupButton('btn-crouch', 'crouch', true, () => playerCrouch());
+
+// VEHICLE HUD BUTTONS
+setupButton('btn-gas', 'gas');
+setupButton('btn-brake', 'brake');
+setupButton('btn-steer-l', 'steer_l');
+setupButton('btn-steer-r', 'steer_r');
+
+window.addEventListener('keydown', e => {
+    let k = e.key.toLowerCase();
+    keys[k] = true;
+    if (k === 'f') toggleCarEnterExit();
+    if (k === 'e') toggleHouseEnterExit();
+    if (k === 'g') deployPlayerGlooWall();
+    if (k === 'k') activateSutraQuantumSkill();
+    if (k === 'h') healPlayer();
+    if (k === 'r') reloadPlayerWeapon();
+    if (e.key === 'Shift') toggleScopeView();
+    if (k === ' ') playerShoot();
+});
+window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+function updateHUDVisibility() {
+    const onFootCtrls = document.querySelectorAll('.on-foot-ctrl');
+    const vehicleCtrls = document.querySelectorAll('.vehicle-ctrl');
+    const joyBox = document.getElementById('joystick-container');
+
+    if (player.inCar) {
+        onFootCtrls.forEach(el => el.style.display = 'none');
+        vehicleCtrls.forEach(el => el.style.display = 'flex');
+        joyBox.style.display = 'none';
+    } else {
+        onFootCtrls.forEach(el => el.style.display = 'flex');
+        vehicleCtrls.forEach(el => el.style.display = 'none');
+        joyBox.style.display = 'flex';
+    }
+}
+
+// ---------------------------------------------------------
+// 4. CAMERA SYSTEM WITH SMOOTH ZOOM
+// ---------------------------------------------------------
+const camera = {
+    x: 0, y: 0, zoom: 0.75, targetZoom: 0.75,
+    update(tx, ty) {
+        this.zoom += (this.targetZoom - this.zoom) * 0.1;
+        let effectiveW = canvas.width / this.zoom;
+        let effectiveH = canvas.height / this.zoom;
+        this.x = tx - effectiveW / 2;
+        this.y = ty - effectiveH / 2;
+
+        if (!player.isIndoors) {
+            this.x = Math.max(0, Math.min(this.x, WORLD.width - effectiveW));
+            this.y = Math.max(0, Math.min(this.y, WORLD.height - effectiveH));
+        }
+    }
+};
+
+function isInView(x, y, margin = 140) {
+    let effectiveW = canvas.width / camera.zoom;
+    let effectiveH = canvas.height / camera.zoom;
+    return x >= camera.x - margin && x <= camera.x + effectiveW + margin &&
+           y >= camera.y - margin && y <= camera.y + effectiveH + margin;
+}
+
+// ---------------------------------------------------------
+// 5. SAFE ZONE & DANGER ZONE SYSTEM (BR CIRCLE)
+// ---------------------------------------------------------
+const safeZone = {
+    x: WORLD.width / 2, y: WORLD.height / 2,
+    radius: 3500, targetRadius: 3500,
+    timer: 120, state: 'WAITING',
+    
+    update() {
+        if (this.state === 'WAITING') {
+            this.timer -= 0.016;
+            if (this.timer <= 0) {
+                this.state = 'SHRINKING';
+                this.targetRadius = Math.max(500, this.radius * 0.5);
+                this.timer = 50;
+                addKillFeedMessage("⚠️ SAFE ZONE IS SHRINKING NOW!");
+            }
+        } else if (this.state === 'SHRINKING') {
+            if (this.radius > this.targetRadius) {
+                this.radius -= 0.9;
+            } else {
+                this.state = 'WAITING';
+                this.timer = 90;
+            }
+        }
+
+        document.getElementById('badge-zone').innerText = `ZONE: ${Math.floor(this.timer)}s`;
+
+        let distToCenter = Math.hypot(player.x - this.x, player.y - this.y);
+        if (distToCenter > this.radius && !player.isDead) {
+            player.takeDamage(0.4);
+        }
+    },
+
+    draw() {
+        if (!isInView(this.x, this.y, this.radius + 100)) return;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+        ctx.lineWidth = 10;
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.04)';
+        ctx.fill();
+        ctx.restore();
+    }
+};
+
+// ---------------------------------------------------------
+// 6. BUILDINGS, GLOO WALLS, VEHICLES & LOOT
+// ---------------------------------------------------------
+const buildings = [];
+for (let x = 900; x < MAP_BOUNDS.maxX - 900; x += 1050) {
+    for (let y = 900; y < MAP_BOUNDS.maxY - 900; y += 1050) {
+        buildings.push({ x, y, w: 460, h: 460, doorX: x + 230, doorY: y + 460 });
+    }
+}
+
+class GlooWall {
+    constructor(x, y, angle, isEnemy = false) {
+        this.x = x; this.y = y; this.angle = angle;
+        this.w = 105; this.h = 26; this.hp = 600; this.maxHp = 600;
+        this.isEnemy = isEnemy;
+    }
+    draw() {
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+        ctx.fillStyle = this.isEnemy ? 'rgba(248, 113, 113, 0.9)' : 'rgba(56, 189, 248, 0.9)';
+        ctx.beginPath(); ctx.roundRect(-this.w/2, -this.h/2, this.w, this.h, 8); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.restore();
+    }
+}
+const glooWalls = [];
+
+function deployPlayerGlooWall() {
+    if (player.isIndoors || player.inCar) return;
+    if (player.glooCount <= 0) {
+        showToast("NO GLOO WALLS LEFT! 🧊");
+        return;
+    }
+    let wx = player.x + Math.cos(player.angle) * 70;
+    let wy = player.y + Math.sin(player.angle) * 70;
+    glooWalls.push(new GlooWall(wx, wy, player.angle + Math.PI/2, false));
+    player.glooCount--;
+    player.wallsUsed++;
+    document.getElementById('gloo-count').innerText = player.glooCount;
+    sutraAudio.playGlooDeploy();
+}
+
+class Vehicle {
+    constructor(x, y) {
+        this.x = x; this.y = y; this.vx = 0; this.vy = 0;
+        this.angle = Math.random() * Math.PI * 2;
+        this.w = 64; this.h = 32;
+        this.hp = 500; this.maxHp = 500;
+        this.driver = null; // Can be player OR bot!
+    }
+
+    updatePhysics() {
+        // Friction & movement
+        this.vx *= 0.94; this.vy *= 0.94;
+        this.x += this.vx; this.y += this.vy;
+
+        let speed = Math.hypot(this.vx, this.vy);
+
+        // -------------------------------------------------------------
+        // DYNAMIC CAR COLLISION WITH BUILDINGS & HOUSES (ठोकिने Physics)
+        // -------------------------------------------------------------
+        buildings.forEach(b => {
+            // Check bounding box intersection
+            if (this.x + 30 > b.x && this.x - 30 < b.x + b.w &&
+                this.y + 20 > b.y && this.y - 20 < b.y + b.h) {
+                
+                let dLeft = Math.abs((this.x + 30) - b.x);
+                let dRight = Math.abs((b.x + b.w) - (this.x - 30));
+                let dTop = Math.abs((this.y + 20) - b.y);
+                let dBottom = Math.abs((b.y + b.h) - (this.y - 20));
+
+                let minOverlap = Math.min(dLeft, dRight, dTop, dBottom);
+
+                if (minOverlap === dLeft) { this.x = b.x - 32; this.vx = -this.vx * 0.4; }
+                else if (minOverlap === dRight) { this.x = b.x + b.w + 32; this.vx = -this.vx * 0.4; }
+                else if (minOverlap === dTop) { this.y = b.y - 22; this.vy = -this.vy * 0.4; }
+                else if (minOverlap === dBottom) { this.y = b.y + b.h + 22; this.vy = -this.vy * 0.4; }
+
+                if (speed > 2.5) {
+                    sutraAudio.playCrashSound();
+                    hitmarkers.push({ x: this.x, y: this.y, life: 18 });
+                    this.hp -= speed * 15;
+                    if (this.driver) {
+                        this.driver.takeDamage(speed * 8, 'car_crash');
+                    }
+                }
+            }
+        });
+
+        // -------------------------------------------------------------
+        // CAR COLLISION WITH GLOO WALLS
+        // -------------------------------------------------------------
+        for (let i = glooWalls.length - 1; i >= 0; i--) {
+            let gw = glooWalls[i];
+            if (Math.hypot(gw.x - this.x, gw.y - this.y) < 55) {
+                if (speed > 4.0) {
+                    glooWalls.splice(i, 1);
+                    sutraAudio.playChaosExplosion();
+                    showToast("💥 CAR SMASHED THROUGH GLOO WALL!");
+                } else {
+                    this.vx = -this.vx * 0.5;
+                    this.vy = -this.vy * 0.5;
+                    sutraAudio.playCrashSound();
+                }
+            }
+        }
+
+        // WORLD MAP BOUNDARIES COLLISION
+        if (this.x < MAP_BOUNDS.minX + 30) { this.x = MAP_BOUNDS.minX + 30; this.vx = -this.vx * 0.5; }
+        if (this.x > MAP_BOUNDS.maxX - 30) { this.x = MAP_BOUNDS.maxX - 30; this.vx = -this.vx * 0.5; }
+        if (this.y < MAP_BOUNDS.minY + 30) { this.y = MAP_BOUNDS.minY + 30; this.vy = -this.vy * 0.5; }
+        if (this.y > MAP_BOUNDS.maxY - 30) { this.y = MAP_BOUNDS.maxY - 30; this.vy = -this.vy * 0.5; }
+    }
+
+    draw() {
+        if (!isInView(this.x, this.y, 90)) return;
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath(); ctx.roundRect(-32, -16, 64, 32, 8); ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.roundRect(-10, -12, 22, 24, 5); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+        // Engine Sparks/Headlights
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(32, -10); ctx.lineTo(60, -20); ctx.lineTo(60, 20); ctx.lineTo(32, 10);
+        ctx.fill();
+
+        ctx.restore();
+    }
+}
+
+const cars = [];
+for (let i = 0; i < 28; i++) {
+    let cx = MAP_BOUNDS.minX + 500 + Math.random() * (MAP_BOUNDS.maxX - MAP_BOUNDS.minX - 1000);
+    let cy = MAP_BOUNDS.minY + 500 + Math.random() * (MAP_BOUNDS.maxY - MAP_BOUNDS.minY - 1000);
+    cars.push(new Vehicle(cx, cy));
+}
+
+class GroundLoot {
+    constructor(x, y, type) {
+        this.x = x; this.y = y;
+        this.type = type;
+        this.radius = type === 'airdrop' ? 24 : 15;
+    }
+    draw() {
+        if (!isInView(this.x, this.y, 45)) return;
+        ctx.save(); ctx.translate(this.x, this.y);
+
+        if (this.type === 'airdrop') {
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(-18, -18, 36, 36);
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5;
+            ctx.strokeRect(-18, -18, 36, 36);
+            ctx.fillStyle = '#fff'; ctx.font = '14px Arial'; ctx.fillText('📦', -8, 6);
+        } else {
+            ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+            if (this.type === 'medkit') {
+                ctx.fillStyle = 'rgba(34, 197, 94, 0.9)'; ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.font = '11px Arial'; ctx.fillText('💊', -6, 4);
+            } else if (this.type === 'mushroom') {
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.9)'; ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.font = '11px Arial'; ctx.fillText('🍄', -6, 4);
+            } else if (this.type === 'gloowall') {
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.9)'; ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.font = '11px Arial'; ctx.fillText('🧊', -6, 4);
+            }
+            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1; ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+}
+const lootItems = [];
+
+function spawnMapLoot() {
+    const types = ['medkit', 'mushroom', 'gloowall'];
+    for (let i = 0; i < 120; i++) {
+        let lx = MAP_BOUNDS.minX + Math.random() * (MAP_BOUNDS.maxX - MAP_BOUNDS.minX);
+        let ly = MAP_BOUNDS.minY + Math.random() * (MAP_BOUNDS.maxY - MAP_BOUNDS.minY);
+        lootItems.push(new GroundLoot(lx, ly, types[Math.floor(Math.random() * types.length)]));
+    }
+    lootItems.push(new GroundLoot(WORLD.width/2 + 300, WORLD.height/2 - 400, 'airdrop'));
+}
+spawnMapLoot();
+
+function addKillFeedMessage(msg) {
+    const feed = document.getElementById('kill-feed');
+    const div = document.createElement('div');
+    div.className = 'kill-msg';
+    div.innerText = msg;
+    feed.appendChild(div);
+    if (feed.children.length > 6) feed.removeChild(feed.children[0]);
+}
+
+// ---------------------------------------------------------
+// 7. RAYCASTING & COLLISION ENGINE
+// ---------------------------------------------------------
+const bullets = [];
+const hitmarkers = [];
+
+// ---------------------------------------------------------
+// 8. PLAYER ENGINE WITH AUTO-LOCK & DECOY DEPLOYMENT
+// ---------------------------------------------------------
+const player = {
+    id: 'player', name: 'Sanjok (Player)',
+    x: WORLD.width / 2, y: WORLD.height / 2, vx: 0, vy: 0, angle: 0,
+    health: 300, maxHealth: 300, ep: 200, maxEp: 200,
+    sutraGhostShield: 100, maxGhostShield: 100,
+    glooCount: 5, medkitCount: 3,
+    kills: 0, damageDealt: 0, wallsUsed: 0,
+    weaponIndex: 0, inCar: false, currentCar: null, isIndoors: false, currentBuilding: null, isScope: false, isDead: false,
+    isCrouching: false,
+
+    reset() {
+        this.x = WORLD.width / 2; this.y = WORLD.height / 2;
+        this.health = 300; this.ep = 200; this.sutraGhostShield = 100;
+        this.glooCount = 5; this.medkitCount = 3;
+        this.kills = 0; this.damageDealt = 0; this.wallsUsed = 0;
+        this.weaponIndex = 0; this.inCar = false; this.isIndoors = false; this.isScope = false; this.isDead = false;
+        document.getElementById('gloo-count').innerText = this.glooCount;
+        document.getElementById('medkit-count').innerText = this.medkitCount;
+        updateHUDVisibility();
+        camera.update(this.x, this.y);
+    },
+
+    update() {
+        if (this.ep > 0 && this.health < this.maxHealth) {
+            this.ep -= 0.08;
+            this.health = Math.min(this.maxHealth, this.health + 0.25);
+        }
+
+        if (this.sutraGhostShield < this.maxGhostShield) {
+            this.sutraGhostShield += 0.06;
+        }
+
+        if (!this.inCar) {
+            let speed = (this.isCrouching ? 2.8 : 5.8) * worldSpeedMultiplier;
+            let mx = 0, my = 0;
+
+            if (joystickVector.x !== 0 || joystickVector.y !== 0) {
+                mx = joystickVector.x; my = joystickVector.y;
+            } else {
+                if (keys['w']) my -= 1;
+                if (keys['s']) my += 1;
+                if (keys['a']) mx -= 1;
+                if (keys['d']) mx += 1;
+            }
+
+            if (mx !== 0 || my !== 0) {
+                if (joystickVector.x !== 0 || joystickVector.y !== 0) this.angle = Math.atan2(my, mx);
+                let mag = Math.min(1, Math.hypot(mx, my));
+                this.vx = Math.cos(Math.atan2(my, mx)) * speed * mag;
+                this.vy = Math.sin(Math.atan2(my, mx)) * speed * mag;
+            } else {
+                this.vx *= 0.75; this.vy *= 0.75;
+            }
+
+            // AUTO-LOCK AIM ASSIST
+            let nearestEnemy = getNearestEnemyInSight();
+            if (nearestEnemy) {
+                let targetAngle = Math.atan2(nearestEnemy.y - this.y, nearestEnemy.x - this.x);
+                let angleDiff = targetAngle - this.angle;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+
+                if (Math.abs(angleDiff) < 0.65) {
+                    this.angle += angleDiff * 0.35;
+                }
+            }
+
+            this.x += this.vx; this.y += this.vy;
+
+            if (!this.isIndoors) {
+                this.x = Math.max(MAP_BOUNDS.minX + 15, Math.min(MAP_BOUNDS.maxX - 15, this.x));
+                this.y = Math.max(MAP_BOUNDS.minY + 15, Math.min(MAP_BOUNDS.maxY - 15, this.y));
+
+                buildings.forEach(b => {
+                    if (this.x > b.x - 15 && this.x < b.x + b.w + 15 && this.y > b.y - 15 && this.y < b.y + b.h + 15) {
+                        let dLeft = this.x - (b.x - 15), dRight = (b.x + b.w + 15) - this.x;
+                        let dTop = this.y - (b.y - 15), dBottom = (b.y + b.h + 15) - this.y;
+                        let minDist = Math.min(dLeft, dRight, dTop, dBottom);
+                        if (minDist === dLeft) this.x = b.x - 15;
+                        else if (minDist === dRight) this.x = b.x + b.w + 15;
+                        else if (minDist === dTop) this.y = b.y - 15;
+                        else if (minDist === dBottom) this.y = b.y + b.h + 15;
+                    }
+                });
+
+                for (let i = lootItems.length - 1; i >= 0; i--) {
+                    let item = lootItems[i];
+                    if (Math.hypot(item.x - this.x, item.y - this.y) < 30) {
+                        this.pickLoot(item);
+                        lootItems.splice(i, 1);
+                    }
+                }
+            }
+        } else {
+            // PLAYER VEHICLE DRIVING PHYSICS
+            let car = this.currentCar;
+            if (keys['steer_l']) car.angle -= 0.058;
+            if (keys['steer_r']) car.angle += 0.058;
+
+            let accel = 0;
+            if (keys['gas']) accel = 1.35 * worldSpeedMultiplier;
+            if (keys['brake']) accel = -0.7;
+
+            car.vx += Math.cos(car.angle) * accel;
+            car.vy += Math.sin(car.angle) * accel;
+
+            car.updatePhysics();
+            this.x = car.x; this.y = car.y; this.angle = car.angle;
+
+            // ROADKILL PLAYER -> BOTS
+            let speed = Math.hypot(car.vx, car.vy);
+            if (speed > 4.2) {
+                enemies.forEach(e => {
+                    if (!e.isDead && Math.hypot(e.x - car.x, e.y - car.y) < 38) {
+                        e.takeDamage(600, 'player');
+                        showToast(`💥 ROADKILL! ELIMINATED ${e.name}!`);
+                    }
+                });
+            }
+        }
+
+        camera.update(this.x, this.y);
+        this.updateHUD();
+    },
+
+    pickLoot(item) {
+        sutraAudio.playLootSound();
+        if (item.type === 'medkit') {
+            this.medkitCount++;
+            document.getElementById('medkit-count').innerText = this.medkitCount;
+            showToast("LOOTED: MEDKIT 💊 (+1)");
+        } else if (item.type === 'mushroom') {
+            this.ep = Math.min(this.maxEp, this.ep + 80);
+            showToast("CONSUMED: MUSHROOM 🍄 (+80 EP)");
+        } else if (item.type === 'gloowall') {
+            this.glooCount += 3;
+            document.getElementById('gloo-count').innerText = this.glooCount;
+            showToast("LOOTED: GLOO WALL PACK 🧊 (+3)");
+        } else if (item.type === 'airdrop') {
+            this.health = 300; this.ep = 200; this.glooCount += 5;
+            document.getElementById('gloo-count').innerText = this.glooCount;
+            showToast("🎁 LEGENDARY AIRDROP LOOTED!");
+        }
+    },
+
+    takeDamage(rawDamage) {
+        let ghostAbsorption = (this.sutraGhostShield / this.maxGhostShield) * 0.35;
+        let effectiveDamage = rawDamage * (1 - ghostAbsorption);
+
+        this.sutraGhostShield = Math.max(0, this.sutraGhostShield - rawDamage * 0.4);
+        this.health -= effectiveDamage;
+
+        if (this.health <= 0 && !this.isDead) {
+            this.isDead = true; this.health = 0;
+            triggerEndGame(false);
+        }
+    },
+
+    updateHUD() {
+        document.getElementById('hp-fill').style.width = `${(this.health / this.maxHealth) * 100}%`;
+        document.getElementById('hp-text').innerText = `${Math.max(0, Math.floor(this.health))}/${this.maxHealth}`;
+        document.getElementById('ep-fill').style.width = `${(this.ep / this.maxEp) * 100}%`;
+        document.getElementById('ep-text').innerText = `${Math.floor(this.ep)}/${this.maxEp}`;
+        document.getElementById('ghost-fill').style.width = `${(this.sutraGhostShield / this.maxGhostShield) * 100}%`;
+        document.getElementById('ghost-text').innerText = `C_uv SHIELD: ${Math.floor(this.sutraGhostShield)}%`;
+        document.getElementById('badge-kills').innerText = `KILLS: ${this.kills}`;
+    },
+
+    draw() {
+        if (!this.inCar) {
+            ctx.save(); ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+
+            if (this.sutraGhostShield > 20) {
+                ctx.beginPath();
+                ctx.arc(0, 0, 20, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.18)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(168, 85, 247, 0.5)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath(); ctx.arc(0, 0, this.isCrouching ? 11 : 14, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(6, -2, 16, 4);
+            ctx.restore();
+        }
+    }
+};
+
+function getNearestEnemyInSight() {
+    let nearest = null, minDist = 600;
+    enemies.forEach(e => {
+        if (!e.isDead) {
+            let d = Math.hypot(e.x - player.x, e.y - player.y);
+            if (d < minDist) { minDist = d; nearest = e; }
+        }
+    });
+    return nearest;
+}
+
+function selectWeaponSlot(idx) {
+    player.weaponIndex = idx;
+    document.querySelectorAll('.wpn-slot').forEach((el, i) => {
+        if (i === idx) el.classList.add('active');
+        else el.classList.remove('active');
+    });
+    showToast(`EQUIPPED: ${WEAPONS_DATABASE[idx].name}`);
+}
+
+function playerShoot() {
+    if (player.inCar || player.isDead) return;
+    let wData = WEAPONS_DATABASE[player.weaponIndex];
+    let bulletX = player.x + Math.cos(player.angle) * 20;
+    let bulletY = player.y + Math.sin(player.angle) * 20;
+
+    bullets.push({
+        x: bulletX, y: bulletY,
+        prevX: bulletX, prevY: bulletY,
+        vx: Math.cos(player.angle) * wData.speed,
+        vy: Math.sin(player.angle) * wData.speed,
+        shooterId: 'player', damage: wData.damage, life: 60
+    });
+    sutraAudio.playSutraSynthesizedGunshot(wData.name, 0);
+}
+
+function playerJump() {
+    if (player.inCar) return;
+    showToast("JUMP! 🦘");
+}
+
+function playerCrouch() {
+    if (player.inCar) return;
+    player.isCrouching = !player.isCrouching;
+}
+
+function activateSutraQuantumSkill() {
+    sutraAudio.playSutraQuantumSkill();
+    showToast("SUTRA TEMPORAL DECOY ACTIVATED! 💫");
+    player.health = Math.min(player.maxHealth, player.health + 60);
+    player.ep = Math.min(player.maxEp, player.ep + 70);
+
+    enemies.forEach(e => {
+        if (!e.isDead && Math.hypot(e.x - player.x, e.y - player.y) < 260) {
+            e.takeDamage(110, 'player');
+            hitmarkers.push({ x: e.x, y: e.y, life: 16 });
+        }
+    });
+}
+
+function healPlayer() {
+    if (player.medkitCount <= 0) {
+        showToast("NO MEDKITS LEFT! 💊");
+        return;
+    }
+    if (player.health >= player.maxHealth) {
+        showToast("HEALTH IS ALREADY FULL!");
+        return;
+    }
+    player.medkitCount--;
+    document.getElementById('medkit-count').innerText = player.medkitCount;
+    player.health = Math.min(player.maxHealth, player.health + 110);
+    showToast("MEDKIT APPLIED! +110 HP 💊");
+}
+
+function reloadPlayerWeapon() { showToast("RELOADED 🔄"); }
+function toggleScopeView() {
+    player.isScope = !player.isScope;
+    document.getElementById('scope-overlay').style.display = player.isScope ? 'block' : 'none';
+    camera.targetZoom = player.isScope ? 1.4 : 0.75;
+}
+
+function toggleCarEnterExit() {
+    if (player.inCar) {
+        player.inCar = false;
+        if (player.currentCar) player.currentCar.driver = null;
+        player.currentCar = null;
+    } else {
+        cars.forEach(c => {
+            if (!c.driver && Math.hypot(c.x - player.x, c.y - player.y) < 100) {
+                player.inCar = true;
+                player.currentCar = c;
+                c.driver = player;
+            }
+        });
+    }
+    updateHUDVisibility();
+}
+
+function toggleHouseEnterExit() {
+    if (player.isIndoors) {
+        player.x = player.currentBuilding.doorX;
+        player.y = player.currentBuilding.doorY + 30;
+        player.isIndoors = false;
+    } else {
+        buildings.forEach(b => {
+            if (Math.hypot(b.doorX - player.x, b.doorY - player.y) < 70) {
+                player.isIndoors = true;
+                player.currentBuilding = b;
+                player.x = b.x + b.w / 2;
+                player.y = b.y + b.h / 2;
+            }
+        });
+    }
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('loot-toast');
+    toast.innerText = msg; toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2000);
+}
+
+function spawnEnemyLootDrop(x, y) {
+    const types = ['medkit', 'mushroom', 'gloowall'];
+    for (let i = 0; i < 4; i++) {
+        let lx = x + (Math.random() - 0.5) * 50;
+        let ly = y + (Math.random() - 0.5) * 50;
+        lootItems.push(new GroundLoot(lx, ly, types[Math.floor(Math.random() * types.length)]));
+    }
+}
+
+// ---------------------------------------------------------
+// 9. ULTRA-SMART MULTI-AGENT BOT AI ENGINE (WITH SUTRA VEHICLE DRIVING & NEURAL DNA)
+// ---------------------------------------------------------
+const BOT_NAMES = ['AWM_King', 'Nepali_Rider', 'Pro_Hunter', 'Sutra_Ninja', 'Shadow_x', 'Destroyer', 'Gloo_Master', 'Zero_Death', 'Kankai_Boy', 'Ktm_Warrior', 'Cyber_Samurai', 'Vortex', 'Alpha_0', 'Matrix_God', 'Delta_1', 'Titan_Nepal', 'Ghost_Rider', 'Hyper_X', 'Apex_Predator'];
+
+class SutraBot {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+        
+        this.dna = {
+            aggression: 0.5 + Math.random() * 0.5,
+            flankBias: Math.random() < 0.5 ? -1 : 1,
+            aimPrecision: 0.4 + Math.random() * 0.5,
+            glooWallReaction: 0.3 + Math.random() * 0.7,
+            drivingSkill: 0.6 + Math.random() * 0.4,
+            speedMultiplier: 1.0
+        };
+
+        this.respawn();
+    }
+
+    respawn() {
+        let angle = Math.random() * Math.PI * 2;
+        let dist = 700 + Math.random() * 2200;
+        this.x = Math.max(MAP_BOUNDS.minX + 100, Math.min(MAP_BOUNDS.maxX - 100, player.x + Math.cos(angle) * dist));
+        this.y = Math.max(MAP_BOUNDS.minY + 100, Math.min(MAP_BOUNDS.maxY - 100, player.y + Math.sin(angle) * dist));
+        
+        this.health = 300; this.maxHealth = 300;
+        this.ep = 200;
+        this.glooCount = 4;
+        this.medkitCount = 3;
+        this.isDead = false; this.angle = Math.random() * Math.PI * 2;
+        this.shootTimer = 0;
+        this.inCar = false;
+        this.currentCar = null;
+    }
+
+    adaptDNA(success = true) {
+        if (success) {
+            this.dna.aggression = Math.min(1.2, this.dna.aggression + 0.05);
+            this.dna.aimPrecision = Math.min(0.95, this.dna.aimPrecision + 0.04);
+        } else {
+            this.dna.glooWallReaction = Math.min(1.0, this.dna.glooWallReaction + 0.1);
+            this.dna.flankBias *= -1;
+        }
+    }
+
+    findNearestTarget() {
+        let candidates = [];
+        if (!player.isDead && !player.isIndoors) {
+            candidates.push({ entity: player, dist: Math.hypot(player.x - this.x, player.y - this.y) });
+        }
+        enemies.forEach(otherBot => {
+            if (otherBot.id !== this.id && !otherBot.isDead) {
+                candidates.push({ entity: otherBot, dist: Math.hypot(otherBot.x - this.x, otherBot.y - this.y) });
+            }
+        });
+
+        candidates.sort((a, b) => a.dist - b.dist);
+        return candidates.length > 0 ? candidates[0] : null;
+    }
+
+    update() {
+        if (this.isDead || player.isIndoors) return;
+
+        if (this.ep > 0 && this.health < this.maxHealth) {
+            this.ep -= 0.08;
+            this.health = Math.min(this.maxHealth, this.health + 0.22);
+        }
+
+        // TACTICAL HEALING BEHAVIOR
+        if (this.health < 140 && this.medkitCount > 0) {
+            this.medkitCount--;
+            this.health = Math.min(this.maxHealth, this.health + 100);
+            
+            if (this.glooCount > 0 && Math.random() < this.dna.glooWallReaction) {
+                let wx = this.x + Math.cos(this.angle) * 50;
+                let wy = this.y + Math.sin(this.angle) * 50;
+                glooWalls.push(new GlooWall(wx, wy, this.angle + Math.PI/2, true));
+                this.glooCount--;
+                sutraAudio.playGlooDeploy();
+            }
+        }
+
+        let distToZoneCenter = Math.hypot(this.x - safeZone.x, this.y - safeZone.y);
+        if (distToZoneCenter > safeZone.radius) {
+            this.takeDamage(0.4, 'zone');
+        }
+
+        // -------------------------------------------------------------
+        // SUTRA BOT VEHICLE HIJACKING & DYNAMIC CAR DRIVING
+        // -------------------------------------------------------------
+        if (!this.inCar && (distToZoneCenter > safeZone.radius - 300 || Math.random() < 0.005)) {
+            cars.forEach(c => {
+                if (!c.driver && Math.hypot(c.x - this.x, c.y - this.y) < 160) {
+                    this.inCar = true;
+                    this.currentCar = c;
+                    c.driver = this;
+                    addKillFeedMessage(`🏎️ ${this.name} ENTERED A CAR!`);
+                }
+            });
+        }
+
+        if (this.inCar && this.currentCar) {
+            let car = this.currentCar;
+
+            // Target choice for Bot Driver: SafeZone center or nearest enemy
+            let targetX = safeZone.x, targetY = safeZone.y;
+            let target = this.findNearestTarget();
+            if (target && target.dist < 1200) {
+                targetX = target.entity.x;
+                targetY = target.entity.y;
+            }
+
+            // Calculate steering towards target
+            let desiredAngle = Math.atan2(targetY - car.y, targetX - car.x);
+            let angleDiff = desiredAngle - car.angle;
+            while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+            while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+
+            // OBSTACLE AVOIDANCE (Houses / Buildings Avoidance)
+            let forwardX = car.x + Math.cos(car.angle) * 110;
+            let forwardY = car.y + Math.sin(car.angle) * 110;
+            buildings.forEach(b => {
+                if (forwardX > b.x && forwardX < b.x + b.w && forwardY > b.y && forwardY < b.y + b.h) {
+                    angleDiff += 1.2; // Steer hard away from building!
+                }
+            });
+
+            car.angle += Math.max(-0.08, Math.min(0.08, angleDiff * 0.15 * this.dna.drivingSkill));
+
+            // Gas & Drive
+            let accel = 1.2 * this.dna.speedMultiplier;
+            car.vx += Math.cos(car.angle) * accel;
+            car.vy += Math.sin(car.angle) * accel;
+
+            car.updatePhysics();
+            this.x = car.x; this.y = car.y; this.angle = car.angle;
+
+            // ROADKILL PLAYER OR OTHER BOTS
+            if (Math.hypot(player.x - car.x, player.y - car.y) < 38 && !player.isDead) {
+                player.takeDamage(220);
+                addKillFeedMessage(`💥 ${this.name} RAN OVER Sanjok!`);
+            }
+
+            enemies.forEach(otherBot => {
+                if (otherBot.id !== this.id && !otherBot.isDead && !otherBot.inCar) {
+                    if (Math.hypot(otherBot.x - car.x, otherBot.y - car.y) < 38) {
+                        otherBot.takeDamage(400, this.id);
+                    }
+                }
+            });
+
+            // Exit car if target is extremely close for combat
+            if (target && target.dist < 180 && Math.random() < 0.02) {
+                this.inCar = false;
+                car.driver = null;
+                this.currentCar = null;
+            }
+            return;
+        }
+
+        // ON FOOT BOT AI
+        let nearest = this.findNearestTarget();
+
+        if (nearest && nearest.dist < 850) {
+            let target = nearest.entity;
+            
+            let leadFactor = 8 * this.dna.aimPrecision;
+            let leadX = target.x + (target.vx || 0) * leadFactor;
+            let leadY = target.y + (target.vy || 0) * leadFactor;
+            this.angle = Math.atan2(leadY - this.y, leadX - this.x);
+
+            let moveSpeed = 2.8 * this.dna.speedMultiplier * worldSpeedMultiplier;
+
+            if (nearest.dist > 200) {
+                this.x += Math.cos(this.angle) * moveSpeed * this.dna.aggression;
+                this.y += Math.sin(this.angle) * moveSpeed * this.dna.aggression;
+            } else {
+                let strafeAngle = this.angle + (Math.PI/2 * this.dna.flankBias);
+                this.x += Math.cos(strafeAngle) * 2.2 * this.dna.speedMultiplier;
+                this.y += Math.sin(strafeAngle) * 2.2 * this.dna.speedMultiplier;
+            }
+
+            this.shootTimer++;
+            let fireInterval = Math.max(16, 35 - Math.floor(this.dna.aggression * 10));
+            if (this.shootTimer > fireInterval) {
+                bullets.push({
+                    x: this.x, y: this.y, prevX: this.x, prevY: this.y,
+                    vx: Math.cos(this.angle) * 25, vy: Math.sin(this.angle) * 25,
+                    shooterId: this.id, damage: 26, life: 60
+                });
+
+                let pan = (this.x - player.x) / 800;
+                sutraAudio.playSutraSynthesizedGunshot('AK47', pan);
+                this.shootTimer = 0;
+            }
+        } else {
+            this.x += Math.cos(this.angle) * 1.5;
+            this.y += Math.sin(this.angle) * 1.5;
+            if (Math.random() < 0.02) this.angle = Math.random() * Math.PI * 2;
+        }
+
+        for (let i = lootItems.length - 1; i >= 0; i--) {
+            let item = lootItems[i];
+            if (Math.hypot(item.x - this.x, item.y - this.y) < 30) {
+                if (item.type === 'medkit') this.medkitCount++;
+                else if (item.type === 'gloowall') this.glooCount += 2;
+                lootItems.splice(i, 1);
+            }
+        }
+    }
+
+    takeDamage(rawDamage, attackerId) {
+        this.health -= rawDamage;
+        this.adaptDNA(false);
+
+        if (this.health <= 0 && !this.isDead) {
+            this.isDead = true;
+            this.health = 0;
+            if (this.inCar && this.currentCar) this.currentCar.driver = null;
+            spawnEnemyLootDrop(this.x, this.y);
+
+            if (attackerId === 'player') {
+                player.kills++;
+                addKillFeedMessage(`💀 Sanjok ELIMINATED ${this.name}!`);
+            } else {
+                let attackerBot = enemies.find(b => b.id === attackerId);
+                let attackerName = attackerBot ? attackerBot.name : (attackerId === 'car_crash' ? 'CAR CRASH 💥' : 'Zone');
+                if (attackerBot) attackerBot.adaptDNA(true);
+                addKillFeedMessage(`💥 ${attackerName} ELIMINATED ${this.name}!`);
+            }
+
+            let remaining = enemies.filter(bot => !bot.isDead).length;
+            document.getElementById('badge-alive').innerText = `ALIVE: ${remaining + (player.isDead ? 0 : 1)}`;
+
+            if (remaining === 0 && !player.isDead) {
+                triggerEndGame(true);
+            }
+        }
+    }
+
+    draw() {
+        if (this.isDead || this.inCar || player.isIndoors || !isInView(this.x, this.y, 60)) return;
+        ctx.save(); ctx.translate(this.x, this.y);
+
+        ctx.save();
+        ctx.rotate(this.angle);
+        ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(6, -2, 14, 4);
+        ctx.restore();
+
+        ctx.fillStyle = 'rgba(0,0,0,0.65)';
+        ctx.fillRect(-22, -28, 44, 6);
+        ctx.fillStyle = '#22c55e';
+        ctx.fillRect(-22, -28, Math.max(0, (this.health / this.maxHealth) * 44), 6);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '9px monospace';
+        ctx.fillText(this.name, -20, -32);
+
+        ctx.restore();
+    }
+}
+
+const enemies = [];
+for (let i = 0; i < 19; i++) {
+    enemies.push(new SutraBot(i + 1, BOT_NAMES[i]));
+}
+
+// ---------------------------------------------------------
+// 10. DYNAMIC SUTRA AI GAME DIRECTOR (SELF-EVOLVING CHAOS CORE IN ALL ASPECTS)
+// ---------------------------------------------------------
+class SutraAIGameDirector {
+    constructor() {
+        this.generation = 1;
+        this.chaosEntropy = 15; // 0 to 100%
+        this.lastDynamicEvent = Date.now();
+        this.meteors = [];
+        this.statusDescription = "MONITORING MATCH EQUILIBRIUM";
+    }
+
+    update() {
+        let activeBots = enemies.filter(b => !b.isDead);
+
+        // Constant entropy escalation to prevent boring balance
+        this.chaosEntropy = Math.min(100, this.chaosEntropy + 0.04);
+
+        document.getElementById('ai-chaos-text').innerText = `${Math.floor(this.chaosEntropy)}%`;
+        document.getElementById('chaos-bar-fill').style.width = `${this.chaosEntropy}%`;
+        document.getElementById('ai-gen-label').innerText = `GEN #${this.generation}`;
+        document.getElementById('ai-status-desc').innerText = this.statusDescription;
+
+        // Trigger dynamic game mutations whenever chaos fills up!
+        if (this.chaosEntropy >= 70 && Date.now() - this.lastDynamicEvent > 7000) {
+            this.triggerChaosMutation();
+            this.chaosEntropy = 10;
+            this.lastDynamicEvent = Date.now();
+        }
+
+        // Update active kinetic meteors
+        for (let i = this.meteors.length - 1; i >= 0; i--) {
+            let m = this.meteors[i];
+            m.timer -= 0.016;
+            if (m.timer <= 0) {
+                sutraAudio.playChaosExplosion();
+                hitmarkers.push({ x: m.x, y: m.y, life: 30 });
+                
+                if (Math.hypot(player.x - m.x, player.y - m.y) < m.radius) {
+                    player.takeDamage(130);
+                }
+                enemies.forEach(b => {
+                    if (!b.isDead && Math.hypot(b.x - m.x, b.y - m.y) < m.radius) {
+                        b.takeDamage(160, 'ai_meteor');
+                    }
+                });
+
+                this.meteors.splice(i, 1);
+            }
+        }
+    }
+
+    triggerChaosMutation() {
+        this.generation++;
+        const chaosTypes = [
+            'QUANTUM_METEOR_STRIKE',
+            'WEAPON_STAT_MUTATION',
+            'BOT_NEURAL_OVERCLOCK',
+            'RAPID_SAFEZONE_WARP',
+            'GRAVITY_SPEED_OVERDRIVE',
+            'SUPPLY_SURGE_GLOO_DROP'
+        ];
+
+        let chosenType = chaosTypes[Math.floor(Math.random() * chaosTypes.length)];
+
+        if (chosenType === 'QUANTUM_METEOR_STRIKE') {
+            this.statusDescription = "KINETIC METEOR BOMBARDMENT!";
+            addKillFeedMessage("☄️ AI DIRECTOR: METEOR STRIKE INITIATED!");
+            for (let i = 0; i < 7; i++) {
+                let rx = safeZone.x + (Math.random() - 0.5) * safeZone.radius;
+                let ry = safeZone.y + (Math.random() - 0.5) * safeZone.radius;
+                this.meteors.push({ x: rx, y: ry, radius: 190, timer: 3.2 });
+            }
+        } else if (chosenType === 'WEAPON_STAT_MUTATION') {
+            this.statusDescription = "WEAPON SPECS MUTATED!";
+            let targetWpn = WEAPONS_DATABASE[Math.floor(Math.random() * WEAPONS_DATABASE.length)];
+            targetWpn.damage = Math.floor(targetWpn.damage * (1.25 + Math.random() * 0.45));
+            targetWpn.speed = Math.floor(targetWpn.speed * 1.2);
+            addKillFeedMessage(`⚡ AI DIRECTOR: ${targetWpn.name} DAMAGE MUTATED TO ${targetWpn.damage}!`);
+        } else if (chosenType === 'BOT_NEURAL_OVERCLOCK') {
+            this.statusDescription = "BOT NEURAL OVERCLOCK ACTIVATED!";
+            addKillFeedMessage("🧠 AI DIRECTOR: BOTS SPEED & DRIVING OVERCLOCKED!");
+            enemies.forEach(b => {
+                b.dna.speedMultiplier += 0.3;
+                b.dna.aggression += 0.25;
+                b.dna.drivingSkill = 1.0;
+            });
+        } else if (chosenType === 'RAPID_SAFEZONE_WARP') {
+            this.statusDescription = "WARPING SAFE ZONE COORDINATES!";
+            addKillFeedMessage("🌀 AI DIRECTOR: SAFE ZONE SHIFTED DYNAMICALLY!");
+            safeZone.x = Math.max(MAP_BOUNDS.minX + 500, Math.min(MAP_BOUNDS.maxX - 500, player.x + (Math.random() - 0.5) * 1200));
+            safeZone.y = Math.max(MAP_BOUNDS.minY + 500, Math.min(MAP_BOUNDS.maxY - 500, player.y + (Math.random() - 0.5) * 1200));
+        } else if (chosenType === 'GRAVITY_SPEED_OVERDRIVE') {
+            this.statusDescription = "WORLD HYPER-SPEED SURGE!";
+            worldSpeedMultiplier = 1.45;
+            addKillFeedMessage("⚡ AI DIRECTOR: WORLD SPEED & MOVEMENT SURGE (1.45x)!");
+            setTimeout(() => { worldSpeedMultiplier = 1.0; }, 12000);
+        } else if (chosenType === 'SUPPLY_SURGE_GLOO_DROP') {
+            this.statusDescription = "EMERGENCY AIRDROP SURGE!";
+            addKillFeedMessage("📦 AI DIRECTOR: MULTIPLE AIRDROPS SPONSORED!");
+            for (let i = 0; i < 4; i++) {
+                lootItems.push(new GroundLoot(safeZone.x + (Math.random() - 0.5) * 600, safeZone.y + (Math.random() - 0.5) * 600, 'airdrop'));
+            }
+        }
+    }
+
+    draw() {
+        this.meteors.forEach(m => {
+            if (!isInView(m.x, m.y, m.radius + 50)) return;
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+            ctx.fill();
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 12px monospace';
+            ctx.fillText(`☄️ METEOR: ${m.timer.toFixed(1)}s`, m.x - 40, m.y);
+            ctx.restore();
+        });
+    }
+}
+const aiDirector = new SutraAIGameDirector();
+
+// ---------------------------------------------------------
+// 11. BULLET ENGINE & HITMARKER PARTICLES
+// ---------------------------------------------------------
+function updateBullets() {
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        let b = bullets[i];
+        b.prevX = b.x; b.prevY = b.y;
+        b.x += b.vx; b.y += b.vy;
+        b.life--;
+
+        let hit = false;
+
+        // Check building wall hits
+        buildings.forEach(bg => {
+            if (b.x > bg.x && b.x < bg.x + bg.w && b.y > bg.y && b.y < bg.y + bg.h) {
+                hit = true;
+                hitmarkers.push({ x: b.x, y: b.y, life: 10 });
+            }
+        });
+
+        // Check Gloo Wall hits
+        glooWalls.forEach((gw, gIdx) => {
+            if (Math.hypot(gw.x - b.x, gw.y - b.y) < 30) {
+                hit = true;
+                gw.hp -= b.damage;
+                hitmarkers.push({ x: b.x, y: b.y, life: 10 });
+                if (gw.hp <= 0) glooWalls.splice(gIdx, 1);
+            }
+        });
+
+        if (hit || b.life <= 0) {
+            bullets.splice(i, 1);
+            continue;
+        }
+
+        // Check hit against player
+        if (b.shooterId !== 'player' && !player.isDead && !player.isIndoors) {
+            if (Math.hypot(player.x - b.x, player.y - b.y) < 18) {
+                player.takeDamage(b.damage);
+                hitmarkers.push({ x: b.x, y: b.y, life: 14 });
+                sutraAudio.playHitMarker();
+                bullets.splice(i, 1);
+                continue;
+            }
+        }
+
+        // Check hit against bots
+        for (let j = 0; j < enemies.length; j++) {
+            let bot = enemies[j];
+            if (b.shooterId !== bot.id && !bot.isDead) {
+                if (Math.hypot(bot.x - b.x, bot.y - b.y) < 18) {
+                    bot.takeDamage(b.damage, b.shooterId);
+                    hitmarkers.push({ x: b.x, y: b.y, life: 14 });
+                    if (b.shooterId === 'player') {
+                        player.damageDealt += b.damage;
+                        sutraAudio.playHitMarker();
+                    }
+                    bullets.splice(i, 1);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function drawBulletsAndHitmarkers() {
+    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5;
+    bullets.forEach(b => {
+        if (!isInView(b.x, b.y, 40)) return;
+        ctx.beginPath();
+        ctx.moveTo(b.prevX, b.prevY);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+    });
+
+    for (let i = hitmarkers.length - 1; i >= 0; i--) {
+        let hm = hitmarkers[i];
+        ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(hm.x, hm.y, 12 - hm.life * 0.4, 0, Math.PI * 2);
+        ctx.stroke();
+        hm.life--;
+        if (hm.life <= 0) hitmarkers.splice(i, 1);
+    }
+}
+
+// ---------------------------------------------------------
+// 12. MINIMAP RADAR RENDERER
+// ---------------------------------------------------------
+function renderMinimap() {
+    miniCtx.clearRect(0, 0, 130, 130);
+    miniCtx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+    miniCtx.fillRect(0, 0, 130, 130);
+
+    let scale = 130 / WORLD.width;
+
+    // Safezone circle
+    miniCtx.strokeStyle = '#38bdf8';
+    miniCtx.lineWidth = 1.5;
+    miniCtx.beginPath();
+    miniCtx.arc(safeZone.x * scale, safeZone.y * scale, safeZone.radius * scale, 0, Math.PI * 2);
+    miniCtx.stroke();
+
+    // Cars
+    miniCtx.fillStyle = '#facc15';
+    cars.forEach(c => {
+        miniCtx.fillRect(c.x * scale - 1, c.y * scale - 1, 3, 3);
+    });
+
+    // Enemies
+    miniCtx.fillStyle = '#ef4444';
+    enemies.forEach(b => {
+        if (!b.isDead) miniCtx.fillRect(b.x * scale - 2, b.y * scale - 2, 4, 4);
+    });
+
+    // Player
+    miniCtx.fillStyle = '#22c55e';
+    miniCtx.beginPath();
+    miniCtx.arc(player.x * scale, player.y * scale, 4, 0, Math.PI * 2);
+    miniCtx.fill();
+}
+
+// ---------------------------------------------------------
+// 13. MAIN GAME LOOP
+// ---------------------------------------------------------
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.scale(camera.zoom, camera.zoom);
+    ctx.translate(-camera.x, -camera.y);
+
+    // Draw Grid Pattern Map
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    let gridSize = 300;
+    for (let x = 0; x < WORLD.width; x += gridSize) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, WORLD.height); ctx.stroke();
+    }
+    for (let y = 0; y < WORLD.height; y += gridSize) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(WORLD.width, y); ctx.stroke();
+    }
+
+    // Draw Buildings
+    buildings.forEach(b => {
+        if (!isInView(b.x + b.w/2, b.y + b.h/2, b.w)) return;
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 3;
+        ctx.strokeRect(b.x, b.y, b.w, b.h);
+
+        // Doorway
+        ctx.fillStyle = '#ec4899';
+        ctx.fillRect(b.doorX - 20, b.doorY - 6, 40, 12);
+    });
+
+    // Updates & Renders
+    safeZone.update();
+    safeZone.draw();
+
+    lootItems.forEach(l => l.draw());
+    glooWalls.forEach(gw => gw.draw());
+    
+    cars.forEach(c => c.draw());
+
+    player.update();
+    player.draw();
+
+    enemies.forEach(bot => {
+        bot.update();
+        bot.draw();
+    });
+
+    aiDirector.update();
+    aiDirector.draw();
+
+    updateBullets();
+    drawBulletsAndHitmarkers();
+
+    ctx.restore();
+
+    renderMinimap();
+
+    requestAnimationFrame(gameLoop);
+}
+
+function triggerEndGame(isWin) {
+    const modal = document.getElementById('game-modal');
+    const heading = document.getElementById('modal-heading');
+    const sub = document.getElementById('modal-sub');
+
+    if (isWin) {
+        heading.className = 'modal-title win-title';
+        heading.innerText = 'BOOYAH!';
+        sub.innerText = 'तपाईँले सूत्र ब्याटल रोयाले एरेना जित्नुभएको छ!';
+    } else {
+        heading.className = 'modal-title lose-title';
+        heading.innerText = 'ELIMINATED!';
+        sub.innerText = 'तपाईँ युद्ध मैदानमा समाप्त हुनुभयो!';
+    }
+
+    document.getElementById('stat-damage').innerText = player.damageDealt;
+    document.getElementById('stat-kills').innerText = player.kills;
+    document.getElementById('stat-walls').innerText = player.wallsUsed;
+    document.getElementById('stat-ai-gen').innerText = `GEN #${aiDirector.generation}`;
+    modal.style.display = 'flex';
+}
+
+function restartGame() {
+    document.getElementById('game-modal').style.display = 'none';
+    player.reset();
+    enemies.forEach(b => b.respawn());
+    glooWalls.length = 0;
+    bullets.length = 0;
+    safeZone.radius = 3500;
+    safeZone.timer = 120;
+    safeZone.state = 'WAITING';
+    document.getElementById('badge-alive').innerText = `ALIVE: 20`;
+}
+
+// Start Game Loop
+gameLoop();
+</script>
+
+<script>
+// Active Master VyomEngine Integration (Sine-Wave Universality & 0 = Infinity)
+window.addEventListener('DOMContentLoaded', () => {
+    try {
+        const vyomCore = new VyomEngine(2.0);
+        console.log("VyomEngine Active Core Initialized Successfully.");
+        window.activeVyomCore = vyomCore;
+        
+        // Automatically hook into input sliders/numbers for live wave calculations
+        document.querySelectorAll('input[type="range"], input[type="number"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) || 1.0;
+                const state = vyomCore.calculateWaveState(val);
+                console.log("VyomEngine Active State:", state);
+            });
+        });
+    } catch (err) {
+        console.error("VyomEngine active hook error:", err);
+    }
+});
+</script>
+
+
+<script>
+// Global Vyom Wave-to-Audio Sonification Engine (Sine-Wave = Everything)
+document.addEventListener("DOMContentLoaded", () => {
+    let audioCtx = null;
+    let oscillator = null;
+    let gainNode = null;
+    let isAudioActive = false;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
+
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // Base frequency
+            gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime); // Safe low volume
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            isAudioActive = true;
+            console.log("Vyom Audio Sonification Initialized: Sine-Wave = Everything Active.");
+        }
+    }
+
+    // Create a floating futuristic audio toggle button dynamically
+    const audioBtn = document.createElement("button");
+    audioBtn.innerText = "🔊 Toggle Vyom Audio";
+    audioBtn.style.position = "fixed";
+    audioBtn.style.bottom = "20px";
+    audioBtn.style.right = "20px";
+    audioBtn.style.zIndex = "9999";
+    audioBtn.style.padding = "10px 15px";
+    audioBtn.style.background = "#0f172a";
+    audioBtn.style.color = "#38bdf8";
+    audioBtn.style.border = "1px solid #38bdf8";
+    audioBtn.style.borderRadius = "8px";
+    audioBtn.style.cursor = "pointer";
+    audioBtn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.4)";
+    audioBtn.style.fontFamily = "monospace";
+    audioBtn.style.fontSize = "12px";
+
+    audioBtn.onclick = () => {
+        initAudio();
+        if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+        if (gainNode) {
+            if (gainNode.gain.value > 0) {
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                audioBtn.innerText = "🔇 Vyom Audio Muted";
+                audioBtn.style.borderColor = "#ef4444";
+                audioBtn.style.color = "#ef4444";
+            } else {
+                gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                audioBtn.innerText = "🔊 Vyom Audio Active";
+                audioBtn.style.borderColor = "#38bdf8";
+                audioBtn.style.color = "#38bdf8";
+            }
+        }
+    };
+    document.body.appendChild(audioBtn);
+
+    // Hook into sliders/inputs to modulate frequency live via Sine waves
+    document.querySelectorAll("input[type="range"], input[type="number"]").forEach(input => {
+        input.addEventListener("input", (e) => {
+            if (isAudioActive && audioCtx && oscillator) {
+                const val = parseFloat(e.target.value) || 1.0;
+                const freq = Math.max(100, Math.min(1200, val * 120));
+                oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            }
+        });
+    });
+});
+</script>
+
+
+<style>
+/* Global Cyberpunk Dark Mode & Vyom HUD Styling */
+body {
+    background-color: #030712 !important;
+    color: #f3f4f6 !important;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+}
+.vyom-hud-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid #38bdf8;
+    border-radius: 12px;
+    padding: 15px;
+    width: 260px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    color: #38bdf8;
+    font-family: monospace;
+    font-size: 11px;
+}
+.vyom-hud-title {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+    padding-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.vyom-hud-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+.vyom-hud-val {
+    color: #e2e8f0;
+}
+</style>
+
+<div id="vyomHud" class="vyom-hud-panel">
+    <div class="vyom-hud-title">
+        <span>🚀 VYOM HUD v3.0</span>
+        <span style="color: #10b981; font-size: 9px;">● ACTIVE</span>
+    </div>
+    <div class="vyom-hud-row"><span>Engine State:</span> <span id="hudState" class="vyom-hud-val">Harmonic</span></div>
+    <div class="vyom-hud-row"><span>Wave Val:</span> <span id="hudWaveVal" class="vyom-hud-val">0.00</span></div>
+    <div class="vyom-hud-row"><span>Duality:</span> <span id="hudDuality" class="vyom-hud-val">0 = ∞</span></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const hudWaveVal = document.getElementById("hudWaveVal");
+    const hudState = document.getElementById("hudState");
+    
+    // Live hook into any range sliders or number inputs on the page
+    document.querySelectorAll('input[type="range"], input[type="number"]').forEach(input => {
+        input.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value) || 0;
+            if(window.activeVyomCore) {
+                const st = window.activeVyomCore.calculateWaveState(val);
+                hudWaveVal.innerText = st.waveValue.toFixed(2);
+                hudState.innerText = st.cosmicState.includes("Absolute") ? "0 = ∞ Duality" : "Harmonic Wave";
+            } else {
+                hudWaveVal.innerText = (Math.sin(val) * 100).toFixed(2);
+            }
+        });
+    });
+});
+</script>
+
+
+<!-- MICRO VYOM HUD v5.0 -->
+<style>
+#micro-vyom-hud {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 99999;
+    background: rgba(3, 7, 18, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #38bdf8;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+#micro-vyom-hud:hover {
+    border-color: #38bdf8;
+    background: rgba(15, 23, 42, 0.95);
+}
+#micro-dropdown {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 200px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid #38bdf8;
+    border-radius: 10px;
+    padding: 12px;
+    color: #f3f4f6;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+}
+.micro-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+</style>
+
+<div id="micro-vyom-hud" onclick="toggleMicroHud(event)">
+    <span>⚡ Vyom</span>
+    <span id="micro-val" style="color: #10b981;">0.00</span>
+    <div id="micro-dropdown" onclick="event.stopPropagation()">
+        <div class="micro-row"><span>State:</span> <span id="micro-state" style="color:#38bdf8;">Harmonic</span></div>
+        <div class="micro-row"><span>Duality:</span> <span style="color:#a855f7;">0 = ∞</span></div>
+        <input type="range" min="0" max="10" step="0.1" value="2.5" style="width:100%; margin-top:6px; accent-color:#38bdf8;" oninput="updateMicroSim(this.value)">
+    </div>
+</div>
+
+<script>
+function toggleMicroHud(e) {
+    e.stopPropagation();
+    const drop = document.getElementById("micro-dropdown");
+    drop.style.display = drop.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", () => {
+    const drop = document.getElementById("micro-dropdown");
+    if(drop) drop.style.display = "none";
+});
+function updateMicroSim(val) {
+    let fVal = parseFloat(val);
+    let waveVal = Math.sin(fVal * Math.PI) * 100;
+    document.getElementById("micro-val").innerText = waveVal.toFixed(1);
+    let state = "Harmonic";
+    if(fVal === 0 || fVal >= 9.9) state = "0 = ∞ Duality";
+    document.getElementById("micro-state").innerText = state;
+}
+</script>
+\n</body>
+</html>
