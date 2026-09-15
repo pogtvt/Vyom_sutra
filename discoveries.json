@@ -349,5 +349,17 @@
         "resonance": "99.81%",
         "sa_score": 9.91,
         "timestamp": "2026-09-15 20:20:33"
+    },
+    {
+        "category": "Oncogene Target",
+        "protein_target": "Ski oncogene (Q60698)",
+        "theta_target": 0.86589,
+        "resolution_k": 1048576,
+        "candidate": "Vyom-Sutra-k1048576-389781",
+        "mw": 340.42,
+        "logp": 1.31,
+        "resonance": "99.1%",
+        "sa_score": 9.95,
+        "timestamp": "2026-09-15 15:22:30"
     }
 ]
