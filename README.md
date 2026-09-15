@@ -1,5 +1,8 @@
 [![Vyom Engine Status](https://github.com/pogtvt/Vyom_sutra/actions/workflows/engine.yml/badge.svg)](https://github.com/pogtvt/Vyom_sutra/actions)
 
+# Vyom Sutra Engine
+Autonomous 64-bit harmonic wave simulation and drug discovery engine running continuously in the GitHub cloud environment.
+
 <div align="center">
 
 # 🚀 Vyom Sutra (व्योम सूत्र)
