@@ -1,18 +1,18 @@
-name: Vyom Autonomous Hyper-Engine
+name: Vyom Engine Cloud Runner
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # हरेक ५-५ मिनेटमा GitHub क्लाउडमा आफैँ चल्ने
+    - cron: '0 */6 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   run-engine:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -20,18 +20,18 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          pip install requests
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true
 
-      - name: Run Vyom Hyper-Engine
+      - name: Run Engine
         run: |
           python run_engine.py
 
-      - name: Commit and Push Discoveries
+      - name: Commit and push changes
         run: |
-          git config --global user.name "Vyom-Autonomous-Bot"
-          git config --global user.email "bot@vyom.sutra"
-          git add discoveries.json
-          git diff --staged --quiet || git commit -m "Cloud Autonomous Discovery: Peak Hyper-Scale [skip ci]"
-          git push
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update simulation data [skip ci]" && git push)
