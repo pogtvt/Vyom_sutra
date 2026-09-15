@@ -1,5 +1,18 @@
 [
     {
+        "id": "CID-11524144",
+        "name": "Dacomitinib (2nd Gen)",
+        "type": "Benchmark",
+        "mw": 469.9,
+        "logp": 3.3,
+        "phase_angle": 1.3638,
+        "c_mu_nu": 5.35,
+        "affinity_score": 97.73,
+        "sa_score": 9.5,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:54:20"
+    },
+    {
         "id": "VYOM-GEN-55398",
         "name": "Vyom-Sutra-k65536-698",
         "type": "Dyadic Inverse Generated",
