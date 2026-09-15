@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUTRA Framework - Infinite Zoom Universe Simulator</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #020205;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            user-select: none;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #ui-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(8, 12, 24, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 200, 0.25);
+            padding: 20px;
+            border-radius: 12px;
+            width: 360px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #00ffcc;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #a0aec0;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #00ffcc;
+            cursor: pointer;
+        }
+        .quick-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        .btn-scale {
+            background: rgba(0, 255, 200, 0.1);
+            border: 1px solid rgba(0, 255, 200, 0.3);
+            color: #00ffcc;
+            padding: 6px 4px;
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-scale:hover {
+            background: rgba(0, 255, 200, 0.3);
+            color: #fff;
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .hud-panel {
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #00ff88;
+            line-height: 1.6;
+        }
+        .hud-value {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .scale-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            background: #ffaa00;
+            color: #000;
+        }
+    </style>
+    <!-- Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="ui-panel">
+        <h2>SUTRA INFINITE ZOOM ENGINE</h2>
+        
+        <div class="control-group">
+            <label for="k-slider">Scale Index (k): <span id="k-val" class="hud-value">-5.0</span></label>
+            <input type="range" id="k-slider" min="-30" max="130" step="0.1" value="-5.0">
+            <div id="scale-indicator" class="scale-badge">HUMAN / MACRO SCALE</div>
+        </div>
+
+        <!-- Quick Jump Buttons for SUTRA Milestones -->
+        <div class="quick-buttons">
+            <button class="btn-scale" onclick="setK(-25)">k = -25 (Cosmic Web)</button>
+            <button class="btn-scale" onclick="setK(-5)">k = -5 (Human Level)</button>
+            <button class="btn-scale" onclick="setK(5)">k = 5 (Boson Particles)</button>
+            <button class="btn-scale" onclick="setK(118)">k = 118 (Black Hole)</button>
+        </div>
+
+        <div class="control-group">
+            <label for="theta-slider">Quantum Phase &theta;(x): <span id="theta-val" class="hud-value">0.00 rad</span></label>
+            <input type="range" id="theta-slider" min="0" max="6.283" step="0.01" value="0">
+        </div>
+
+        <div class="toggle-container">
+            <label for="cmunu-toggle">C<sub>&mu;&nu;</sub> Ghost-Canceling:</label>
+            <input type="checkbox" id="cmunu-toggle" checked>
+        </div>
+
+        <div class="toggle-container">
+            <label for="autorotate-toggle">Auto Phase Rotation:</label>
+            <input type="checkbox" id="autorotate-toggle" checked>
+        </div>
+
+        <div class="hud-panel">
+            <div>Dyadic Multiplier (2^k): <span id="hud-2k" class="hud-value">0.03</span></div>
+            <div>Action Density L_eff: <span id="hud-leff" class="hud-value">1.00 L0</span></div>
+            <div>Phase Vector e^(i&theta;): <span id="hud-ei" class="hud-value">1.00 + 0.00i</span></div>
+            <div>C_munu Connection: <span id="hud-cmunu" class="hud-value">STABLE</span></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. SUTRA FRAMEWORK STATE ---
+        const SUTRA = {
+            k: -5.0,
+            theta: 0.0,
+            cMunuActive: true,
+            autoRotate: true,
+            L0: 1.0
+        };
+
+        // --- 2. THREE.JS SCENE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x020205, 0.0008);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
+        camera.position.set(0, 20, 100);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // --- 3. PROCEDURAL MULTI-SCALE OBJECT GROUPS ---
+
+        // A. COSMIC SCALE (k <= -15): Galaxies & Cosmic Web
+        const cosmicGroup = new THREE.Group();
+        const cosmicParticleCount = 15000;
+        const cosmicGeo = new THREE.BufferGeometry();
+        const cosmicPos = new Float32Array(cosmicParticleCount * 3);
+        const cosmicCol = new Float32Array(cosmicParticleCount * 3);
+
+        for (let i = 0; i < cosmicParticleCount; i++) {
+            const radius = Math.random() * 300 + 10;
+            const spin = radius * 0.05;
+            const angle = Math.random() * Math.PI * 2 + spin;
+            
+            cosmicPos[i * 3] = Math.cos(angle) * radius + (Math.random() - 0.5) * 20;
+            cosmicPos[i * 3 + 1] = (Math.random() - 0.5) * 30;
+            cosmicPos[i * 3 + 2] = Math.sin(angle) * radius + (Math.random() - 0.5) * 20;
+
+            cosmicCol[i * 3] = 0.4 + Math.random() * 0.6;
+            cosmicCol[i * 3 + 1] = 0.2 + Math.random() * 0.4;
+            cosmicCol[i * 3 + 2] = 0.8 + Math.random() * 0.2;
+        }
+        cosmicGeo.setAttribute('position', new THREE.BufferAttribute(cosmicPos, 3));
+        cosmicGeo.setAttribute('color', new THREE.BufferAttribute(cosmicCol, 3));
+        const cosmicMat = new THREE.PointsMaterial({ size: 2.0, vertexColors: true, transparent: true, opacity: 0 });
+        const cosmicPoints = new THREE.Points(cosmicGeo, cosmicMat);
+        cosmicGroup.add(cosmicPoints);
+        scene.add(cosmicGroup);
+
+        // B. HUMAN / MACRO SCALE (k = -15 to 0): Human Silhouette & Cellular Grid
+        const humanGroup = new THREE.Group();
+        const humanGeo = new THREE.SphereGeometry(15, 32, 32);
+        const humanWireMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true, transparent: true, opacity: 0 });
+        const humanMesh = new THREE.Mesh(humanGeo, humanWireMat);
+        humanGroup.add(humanMesh);
+        scene.add(humanGroup);
+
+        // C. ELEMENTARY PARTICLE & BOSON SCALE (k = 0 to 20, Peak k=5): Quantum Explosion & Field Ring
+        const particleGroup = new THREE.Group();
+        const bosonCount = 8000;
+        const bosonGeo = new THREE.BufferGeometry();
+        const bosonPos = new Float32Array(bosonCount * 3);
+        const bosonCol = new Float32Array(bosonCount * 3);
+
+        for (let i = 0; i < bosonCount; i++) {
+            const u = Math.random();
+            const v = Math.random();
+            const theta = u * 2.0 * Math.PI;
+            const phi = Math.acos(2.0 * v - 1.0);
+            const r = 2 + Math.random() * 25;
+
+            bosonPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+            bosonPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+            bosonPos[i * 3 + 2] = r * Math.cos(phi);
+
+            bosonCol[i * 3] = 1.0;
+            bosonCol[i * 3 + 1] = 0.3 + Math.random() * 0.7;
+            bosonCol[i * 3 + 2] = 0.0;
+        }
+        bosonGeo.setAttribute('position', new THREE.BufferAttribute(bosonPos, 3));
+        bosonGeo.setAttribute('color', new THREE.BufferAttribute(bosonCol, 3));
+        const bosonMat = new THREE.PointsMaterial({ size: 1.5, vertexColors: true, transparent: true, opacity: 0, blending: THREE.AdditiveBlending });
+        const bosonPoints = new THREE.Points(bosonGeo, bosonMat);
+        particleGroup.add(bosonPoints);
+        scene.add(particleGroup);
+
+        // D. BLACK HOLE & PHASE CONDENSATE CORE (k = 80 to 130, Peak k=118)
+        const bhGroup = new THREE.Group();
+        
+        // Event Horizon Core
+        const bhCoreGeo = new THREE.SphereGeometry(10, 64, 64);
+        const bhCoreMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const bhCoreMesh = new THREE.Mesh(bhCoreGeo, bhCoreMat);
+        bhGroup.add(bhCoreMesh);
+
+        // Photonic Accretion Ring
+        const bhRingGeo = new THREE.RingGeometry(12, 35, 64);
+        const bhRingMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, side: THREE.DoubleSide, transparent: true, opacity: 0, wireframe: true });
+        const bhRingMesh = new THREE.Mesh(bhRingGeo, bhRingMat);
+        bhRingMesh.rotation.x = Math.PI / 2.5;
+        bhGroup.add(bhRingMesh);
+
+        scene.add(bhGroup);
+
+        // --- 4. SUTRA MATHEMATICAL PHYSICS & OPACITY DYNAMICS ---
+        function updateSutraEngine(time) {
+            const k = SUTRA.k;
+            const theta = SUTRA.theta;
+            const cosTheta = Math.cos(theta);
+            const sinTheta = Math.sin(theta);
+
+            // SUTRA Equations
+            const dyadicMultiplier = Math.pow(2, k);
+            const Leff = SUTRA.L0 * (Math.pow(2, Math.max(0, k) + 1) - 1);
+
+            // Calculate Opacity Overlaps based on SUTRA Scale
+            const wCosmic = Math.max(0, Math.min(1, 1 - Math.abs(k - (-25)) / 12));
+            const wHuman = Math.max(0, Math.min(1, 1 - Math.abs(k - (-5)) / 8));
+            const wBoson = Math.max(0, Math.min(1, 1 - Math.abs(k - 5) / 10));
+            const wBlackHole = Math.max(0, Math.min(1, 1 - Math.abs(k - 118) / 25));
+
+            // Apply Opacities
+            cosmicMat.opacity = wCosmic;
+            humanWireMat.opacity = wHuman;
+            bosonMat.opacity = wBoson;
+            bhRingMat.opacity = wBlackHole;
+
+            // U(1) Phase Rotation e^(i*theta)
+            cosmicGroup.rotation.y = time * 0.0001 + theta * 0.5;
+            humanGroup.rotation.y = time * 0.0005 + theta;
+            particleGroup.rotation.z = time * 0.001 + theta;
+            bhRingMesh.rotation.z = time * 0.002 + theta * 2;
+
+            // Ghost-Canceling C_munu Effect
+            if (!SUTRA.cMunuActive) {
+                // Instability Distortion
+                const jitter = (Math.random() - 0.5) * 3.0;
+                particleGroup.position.set(jitter, jitter, jitter);
+                bhGroup.position.set(jitter, jitter, jitter);
+            } else {
+                particleGroup.position.set(0, 0, 0);
+                bhGroup.position.set(0, 0, 0);
+            }
+
+            // HUD & Label Updates
+            document.getElementById('hud-2k').innerText = dyadicMultiplier < 0.0001 ? dyadicMultiplier.toExponential(2) : dyadicMultiplier.toFixed(2);
+            document.getElementById('hud-leff').innerText = Leff.toFixed(2) + " L0";
+            document.getElementById('hud-ei').innerText = `${cosTheta.toFixed(2)} + ${sinTheta.toFixed(2)}i`;
+            document.getElementById('hud-cmunu').innerText = SUTRA.cMunuActive ? "STABLE" : "UNSTABLE (Ghost Noise)";
+            document.getElementById('hud-cmunu').style.color = SUTRA.cMunuActive ? "#00ff88" : "#ff3366";
+
+            // Update Badge Label
+            const indicator = document.getElementById('scale-indicator');
+            if (k <= -15) {
+                indicator.innerText = "COSMIC / UNIVERSE SCALE";
+                indicator.style.background = "#9900ff";
+                indicator.style.color = "#fff";
+            } else if (k > -15 && k <= 0) {
+                indicator.innerText = "HUMAN / MACRO SCALE";
+                indicator.style.background = "#00ffcc";
+                indicator.style.color = "#000";
+            } else if (k > 0 && k <= 30) {
+                indicator.innerText = "BOSON / ELEMENTARY PARTICLE (k=5)";
+                indicator.style.background = "#ff9900";
+                indicator.style.color = "#000";
+            } else {
+                indicator.innerText = "BLACK HOLE / PHASE CONDENSATE (k=118)";
+                indicator.style.background = "#ff0055";
+                indicator.style.color = "#fff";
+            }
+        }
+
+        // --- 5. UI LISTENERS & QUICK JUMP FUNCTIONS ---
+        const kSlider = document.getElementById('k-slider');
+        const thetaSlider = document.getElementById('theta-slider');
+        const cmunuToggle = document.getElementById('cmunu-toggle');
+        const autorotateToggle = document.getElementById('autorotate-toggle');
+
+        kSlider.addEventListener('input', (e) => {
+            SUTRA.k = parseFloat(e.target.value);
+            document.getElementById('k-val').innerText = SUTRA.k.toFixed(1);
+        });
+
+        thetaSlider.addEventListener('input', (e) => {
+            SUTRA.theta = parseFloat(e.target.value);
+            document.getElementById('theta-val').innerText = SUTRA.theta.toFixed(2) + " rad";
+        });
+
+        cmunuToggle.addEventListener('change', (e) => SUTRA.cMunuActive = e.target.checked);
+        autorotateToggle.addEventListener('change', (e) => SUTRA.autoRotate = e.target.checked);
+
+        function setK(val) {
+            SUTRA.k = val;
+            kSlider.value = val;
+            document.getElementById('k-val').innerText = val.toFixed(1);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- 6. ANIMATION LOOP ---
+        function animate(time) {
+            requestAnimationFrame(animate);
+
+            if (SUTRA.autoRotate) {
+                SUTRA.theta = (time * 0.0005) % (Math.PI * 2);
+                thetaSlider.value = SUTRA.theta;
+                document.getElementById('theta-val').innerText = SUTRA.theta.toFixed(2) + " rad";
+            }
+
+            updateSutraEngine(time);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate(0);
+    </script>
+
+<script>
+// Active Master VyomEngine Integration (Sine-Wave Universality & 0 = Infinity)
+window.addEventListener('DOMContentLoaded', () => {
+    try {
+        const vyomCore = new VyomEngine(2.0);
+        console.log("VyomEngine Active Core Initialized Successfully.");
+        window.activeVyomCore = vyomCore;
+        
+        // Automatically hook into input sliders/numbers for live wave calculations
+        document.querySelectorAll('input[type="range"], input[type="number"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value) || 1.0;
+                const state = vyomCore.calculateWaveState(val);
+                console.log("VyomEngine Active State:", state);
+            });
+        });
+    } catch (err) {
+        console.error("VyomEngine active hook error:", err);
+    }
+});
+</script>
+
+
+<script>
+// Global Vyom Wave-to-Audio Sonification Engine (Sine-Wave = Everything)
+document.addEventListener("DOMContentLoaded", () => {
+    let audioCtx = null;
+    let oscillator = null;
+    let gainNode = null;
+    let isAudioActive = false;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
+
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // Base frequency
+            gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime); // Safe low volume
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            isAudioActive = true;
+            console.log("Vyom Audio Sonification Initialized: Sine-Wave = Everything Active.");
+        }
+    }
+
+    // Create a floating futuristic audio toggle button dynamically
+    const audioBtn = document.createElement("button");
+    audioBtn.innerText = "🔊 Toggle Vyom Audio";
+    audioBtn.style.position = "fixed";
+    audioBtn.style.bottom = "20px";
+    audioBtn.style.right = "20px";
+    audioBtn.style.zIndex = "9999";
+    audioBtn.style.padding = "10px 15px";
+    audioBtn.style.background = "#0f172a";
+    audioBtn.style.color = "#38bdf8";
+    audioBtn.style.border = "1px solid #38bdf8";
+    audioBtn.style.borderRadius = "8px";
+    audioBtn.style.cursor = "pointer";
+    audioBtn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.4)";
+    audioBtn.style.fontFamily = "monospace";
+    audioBtn.style.fontSize = "12px";
+
+    audioBtn.onclick = () => {
+        initAudio();
+        if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+        if (gainNode) {
+            if (gainNode.gain.value > 0) {
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                audioBtn.innerText = "🔇 Vyom Audio Muted";
+                audioBtn.style.borderColor = "#ef4444";
+                audioBtn.style.color = "#ef4444";
+            } else {
+                gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                audioBtn.innerText = "🔊 Vyom Audio Active";
+                audioBtn.style.borderColor = "#38bdf8";
+                audioBtn.style.color = "#38bdf8";
+            }
+        }
+    };
+    document.body.appendChild(audioBtn);
+
+    // Hook into sliders/inputs to modulate frequency live via Sine waves
+    document.querySelectorAll("input[type="range"], input[type="number"]").forEach(input => {
+        input.addEventListener("input", (e) => {
+            if (isAudioActive && audioCtx && oscillator) {
+                const val = parseFloat(e.target.value) || 1.0;
+                const freq = Math.max(100, Math.min(1200, val * 120));
+                oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            }
+        });
+    });
+});
+</script>
+
+
+<style>
+/* Global Cyberpunk Dark Mode & Vyom HUD Styling */
+body {
+    background-color: #030712 !important;
+    color: #f3f4f6 !important;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+}
+.vyom-hud-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid #38bdf8;
+    border-radius: 12px;
+    padding: 15px;
+    width: 260px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    color: #38bdf8;
+    font-family: monospace;
+    font-size: 11px;
+}
+.vyom-hud-title {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+    padding-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.vyom-hud-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+.vyom-hud-val {
+    color: #e2e8f0;
+}
+</style>
+
+<div id="vyomHud" class="vyom-hud-panel">
+    <div class="vyom-hud-title">
+        <span>🚀 VYOM HUD v3.0</span>
+        <span style="color: #10b981; font-size: 9px;">● ACTIVE</span>
+    </div>
+    <div class="vyom-hud-row"><span>Engine State:</span> <span id="hudState" class="vyom-hud-val">Harmonic</span></div>
+    <div class="vyom-hud-row"><span>Wave Val:</span> <span id="hudWaveVal" class="vyom-hud-val">0.00</span></div>
+    <div class="vyom-hud-row"><span>Duality:</span> <span id="hudDuality" class="vyom-hud-val">0 = ∞</span></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const hudWaveVal = document.getElementById("hudWaveVal");
+    const hudState = document.getElementById("hudState");
+    
+    // Live hook into any range sliders or number inputs on the page
+    document.querySelectorAll('input[type="range"], input[type="number"]').forEach(input => {
+        input.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value) || 0;
+            if(window.activeVyomCore) {
+                const st = window.activeVyomCore.calculateWaveState(val);
+                hudWaveVal.innerText = st.waveValue.toFixed(2);
+                hudState.innerText = st.cosmicState.includes("Absolute") ? "0 = ∞ Duality" : "Harmonic Wave";
+            } else {
+                hudWaveVal.innerText = (Math.sin(val) * 100).toFixed(2);
+            }
+        });
+    });
+});
+</script>
+
+
+<!-- MICRO VYOM HUD v5.0 -->
+<style>
+#micro-vyom-hud {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 99999;
+    background: rgba(3, 7, 18, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #38bdf8;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+#micro-vyom-hud:hover {
+    border-color: #38bdf8;
+    background: rgba(15, 23, 42, 0.95);
+}
+#micro-dropdown {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 200px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid #38bdf8;
+    border-radius: 10px;
+    padding: 12px;
+    color: #f3f4f6;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+}
+.micro-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+</style>
+
+<div id="micro-vyom-hud" onclick="toggleMicroHud(event)">
+    <span>⚡ Vyom</span>
+    <span id="micro-val" style="color: #10b981;">0.00</span>
+    <div id="micro-dropdown" onclick="event.stopPropagation()">
+        <div class="micro-row"><span>State:</span> <span id="micro-state" style="color:#38bdf8;">Harmonic</span></div>
+        <div class="micro-row"><span>Duality:</span> <span style="color:#a855f7;">0 = ∞</span></div>
+        <input type="range" min="0" max="10" step="0.1" value="2.5" style="width:100%; margin-top:6px; accent-color:#38bdf8;" oninput="updateMicroSim(this.value)">
+    </div>
+</div>
+
+<script>
+function toggleMicroHud(e) {
+    e.stopPropagation();
+    const drop = document.getElementById("micro-dropdown");
+    drop.style.display = drop.style.display === "block" ? "none" : "block";
+}
+document.addEventListener("click", () => {
+    const drop = document.getElementById("micro-dropdown");
+    if(drop) drop.style.display = "none";
+});
+function updateMicroSim(val) {
+    let fVal = parseFloat(val);
+    let waveVal = Math.sin(fVal * Math.PI) * 100;
+    document.getElementById("micro-val").innerText = waveVal.toFixed(1);
+    let state = "Harmonic";
+    if(fVal === 0 || fVal >= 9.9) state = "0 = ∞ Duality";
+    document.getElementById("micro-state").innerText = state;
+}
+</script>
+\n</body>
+</html>
