@@ -373,5 +373,17 @@
         "resonance": "99.1%",
         "sa_score": 9.97,
         "timestamp": "2026-09-15 15:45:58"
+    },
+    {
+        "category": "Kinase Inhibitor Target",
+        "protein_target": "MAP kinase-interacting serine/threonine-protein kinase 2 (Q9HBH9)",
+        "theta_target": 0.92027036,
+        "resolution_k": "2^64 (Hyper-Scale)",
+        "candidate": "Vyom-Sutra-Hyper64-569299",
+        "mw": 479.58,
+        "logp": 2.61,
+        "resonance": "100.0%",
+        "sa_score": 10.0,
+        "timestamp": "2026-09-15 22:08:31"
     }
 ]
