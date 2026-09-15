@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-3081361",
+        "name": "Vandetanib (VEGFR/EGFR)",
+        "mw": 475.4,
+        "logp": 4.8,
+        "phase_angle": 1.5259,
+        "c_mu_nu": 13.3,
+        "affinity_score": 86.5,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:21:44"
+    },
+    {
         "id": "CID-78357754",
         "name": "Nazartinib / EGF816",
         "mw": 463.9,
