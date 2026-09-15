@@ -1,338 +1,60 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sutra Physics Clash Engine v6.1</title>
+    <title>Vyom Sutra: Universal Sine-Wave Hierarchy</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="container">
+    <h1>Vyom Sutra: Universal Sine-Wave Hierarchy</h1>
+    <div class="subtitle">All States are Unified Sine-Wave Manifestations: Black Hole ⇌ Particle ⇌ Gravity ⇌ Dark Energy</div>
 
-<div id="game-container">
-    <canvas id="gameCanvas"></canvas>
-    <div id="ui-panel">
-        <button id="k118-btn" onclick="triggerSingularity()">k=118 CORE</button>
-        <div class="elixir-bar-container">
-            <div id="elixirFill" class="elixir-fill"></div>
-            <div id="elixirText" class="elixir-text">ENERGY: 5/10</div>
+    <div class="status-box" id="statusBox">
+        <div><strong>State:</strong> <span id="stateName">Dark Energy (Ultra-Long wavelength)</span></div>
+        <div><strong>Definition:</strong> <span id="stateDef">Ultra-Long Wavelength -> Undetectable Wave Field</span></div>
+    </div>
+
+    <canvas id="waveCanvas"></canvas>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Wave Frequency / Compression: <span id="freqVal">1.0</span> Hz</label>
+            <input type="range" id="freqSlider" min="0.2" max="25" step="0.1" value="1.0">
+            <label style="margin-top: 12px;">Wave Spread (Amplitude): <span id="ampVal">50</span></label>
+            <input type="range" id="ampSlider" min="10" max="90" step="1" value="50">
         </div>
-        <div class="cards-row" id="cardsRow"></div>
+        <div class="control-group">
+            <label>Select Wave Hierarchy State:</label>
+            <div class="btn-grid">
+                <button onclick="setMode('dark', 1.2)" id="btn-dark" class="active">Dark Energy</button>
+                <button onclick="setMode('gravity', 3.8)" id="btn-gravity">Gravity</button>
+                <button onclick="setMode('particle', 8.5)" id="btn-particle">Particle State</button>
+                <button onclick="setMode('bh', 21.0)" id="btn-bh">Black Hole</button>
+            </div>
+        </div>
     </div>
-    
-    <div id="game-over-screen">
-        <h1 id="resultText">VICTORY!</h1>
-        <button id="restart-btn" onclick="initGame()">RESTART</button>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <span>WAVE STATE</span>
+            <strong id="mState">Dark Energy</strong>
+        </div>
+        <div class="metric-card">
+            <span>WAVELENGTH SCALE</span>
+            <strong id="mScale">Ultra-Long</strong>
+        </div>
+        <div class="metric-card">
+            <span>DETECTION STATUS</span>
+            <strong id="mDetect">Undetectable</strong>
+        </div>
+        <div class="metric-card">
+            <span>TOPOLOGY</span>
+            <strong id="mTopo">0 ⇌ Loop</strong>
+        </div>
     </div>
-=======
-<html lang="ne">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sutra Audio Engine (Mobile / Spck Optimized)</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<div class="synth-card">
-  <h1>Sutra Mobile Synth</h1>
-  
-  <div class="notice-box">
-    ⚠️ Spck भित्र डाउनलोड नभएमा माथिको 🌐 (Chrome Icon) थिचेर ब्राउजरमा खोल्नुहोस्।
-  </div>
-
-  <div class="input-bar">
-    <button id="btnRecord" class="btn">🎙️ रेकर्ड</button>
-    <button id="btnUpload" class="btn" onclick="document.getElementById('fileInput').click()">📁 फाइल</button>
-    <button id="btnDemo" class="btn">🎵 टेस्ट टोन</button>
-    <input type="file" id="fileInput" class="hidden" accept="audio/*">
-  </div>
-
-  <div class="grid-params">
-    <div class="param-box">
-      <div class="param-label">Tier (k): <span id="kVal">16</span></div>
-      <input type="range" id="paramK" min="1" max="32" value="16" step="1">
-    </div>
-    <div class="param-box">
-      <div class="param-label">Gain: <span id="levelVal">50%</span></div>
-      <input type="range" id="paramLevel" min="0" max="100" value="50" step="1">
-    </div>
-    <div class="param-box">
-      <div class="param-label">Phase (θ): <span id="thetaVal">1.57</span></div>
-      <input type="range" id="paramTheta" min="0" max="6.28" value="1.57" step="0.05">
-    </div>
-    <div class="param-box">
-      <div class="param-label">Ghost (C_μν): <span id="ghostVal">0.6</span></div>
-      <input type="range" id="paramGhost" min="0" max="2.0" value="0.6" step="0.1">
-    </div>
-  </div>
-
-  <canvas id="visualizer"></canvas>
-
-  <div class="status-panel" id="statusText">
-    अवस्था: तयार छ। रेकर्ड वा टेस्ट टोन थिच्नुहोस्।
-  </div>
-
-  <button id="btnSynthesize" class="btn btn-master" disabled>⚡ सूत्र सिन्थेसाइज गर्नुहोस्</button>
-  <button id="btnPlay" class="btn" style="width: 100%; margin-top: 6px;" disabled>▶️ अवाज बजाउनुहोस्</button>
-  <a id="btnDownload" class="btn-download hidden" download="sutra_sound.wav">📥 WAV डाउनलोड गर्नुहोस् (Click Here)</a>
->>>>>>> c0e1f1c (feat: split web synthesizer into index.html, style.css, and script.js)
 </div>
 
 <script src="script.js"></script>
-
-<script>
-// Active Master VyomEngine Integration (Sine-Wave Universality & 0 = Infinity)
-window.addEventListener('DOMContentLoaded', () => {
-    try {
-        const vyomCore = new VyomEngine(2.0);
-        console.log("VyomEngine Active Core Initialized Successfully.");
-        window.activeVyomCore = vyomCore;
-        
-        // Automatically hook into input sliders/numbers for live wave calculations
-        document.querySelectorAll('input[type="range"], input[type="number"]').forEach(input => {
-            input.addEventListener('input', (e) => {
-                const val = parseFloat(e.target.value) || 1.0;
-                const state = vyomCore.calculateWaveState(val);
-                console.log("VyomEngine Active State:", state);
-            });
-        });
-    } catch (err) {
-        console.error("VyomEngine active hook error:", err);
-    }
-});
-</script>
-
-
-<script>
-// Global Vyom Wave-to-Audio Sonification Engine (Sine-Wave = Everything)
-document.addEventListener("DOMContentLoaded", () => {
-    let audioCtx = null;
-    let oscillator = null;
-    let gainNode = null;
-    let isAudioActive = false;
-
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            oscillator = audioCtx.createOscillator();
-            gainNode = audioCtx.createGain();
-
-            oscillator.type = "sine";
-            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // Base frequency
-            gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime); // Safe low volume
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            isAudioActive = true;
-            console.log("Vyom Audio Sonification Initialized: Sine-Wave = Everything Active.");
-        }
-    }
-
-    // Create a floating futuristic audio toggle button dynamically
-    const audioBtn = document.createElement("button");
-    audioBtn.innerText = "🔊 Toggle Vyom Audio";
-    audioBtn.style.position = "fixed";
-    audioBtn.style.bottom = "20px";
-    audioBtn.style.right = "20px";
-    audioBtn.style.zIndex = "9999";
-    audioBtn.style.padding = "10px 15px";
-    audioBtn.style.background = "#0f172a";
-    audioBtn.style.color = "#38bdf8";
-    audioBtn.style.border = "1px solid #38bdf8";
-    audioBtn.style.borderRadius = "8px";
-    audioBtn.style.cursor = "pointer";
-    audioBtn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.4)";
-    audioBtn.style.fontFamily = "monospace";
-    audioBtn.style.fontSize = "12px";
-
-    audioBtn.onclick = () => {
-        initAudio();
-        if (audioCtx && audioCtx.state === "suspended") {
-            audioCtx.resume();
-        }
-        if (gainNode) {
-            if (gainNode.gain.value > 0) {
-                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-                audioBtn.innerText = "🔇 Vyom Audio Muted";
-                audioBtn.style.borderColor = "#ef4444";
-                audioBtn.style.color = "#ef4444";
-            } else {
-                gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
-                audioBtn.innerText = "🔊 Vyom Audio Active";
-                audioBtn.style.borderColor = "#38bdf8";
-                audioBtn.style.color = "#38bdf8";
-            }
-        }
-    };
-    document.body.appendChild(audioBtn);
-
-    // Hook into sliders/inputs to modulate frequency live via Sine waves
-    document.querySelectorAll("input[type="range"], input[type="number"]").forEach(input => {
-        input.addEventListener("input", (e) => {
-            if (isAudioActive && audioCtx && oscillator) {
-                const val = parseFloat(e.target.value) || 1.0;
-                const freq = Math.max(100, Math.min(1200, val * 120));
-                oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            }
-        });
-    });
-});
-</script>
-
-
-<style>
-/* Global Cyberpunk Dark Mode & Vyom HUD Styling */
-body {
-    background-color: #030712 !important;
-    color: #f3f4f6 !important;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-}
-.vyom-hud-panel {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    background: rgba(15, 23, 42, 0.9);
-    backdrop-filter: blur(12px);
-    border: 1px solid #38bdf8;
-    border-radius: 12px;
-    padding: 15px;
-    width: 260px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-    color: #38bdf8;
-    font-family: monospace;
-    font-size: 11px;
-}
-.vyom-hud-title {
-    font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid rgba(56, 189, 248, 0.3);
-    padding-bottom: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.vyom-hud-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
-}
-.vyom-hud-val {
-    color: #e2e8f0;
-}
-</style>
-
-<div id="vyomHud" class="vyom-hud-panel">
-    <div class="vyom-hud-title">
-        <span>🚀 VYOM HUD v3.0</span>
-        <span style="color: #10b981; font-size: 9px;">● ACTIVE</span>
-    </div>
-    <div class="vyom-hud-row"><span>Engine State:</span> <span id="hudState" class="vyom-hud-val">Harmonic</span></div>
-    <div class="vyom-hud-row"><span>Wave Val:</span> <span id="hudWaveVal" class="vyom-hud-val">0.00</span></div>
-    <div class="vyom-hud-row"><span>Duality:</span> <span id="hudDuality" class="vyom-hud-val">0 = ∞</span></div>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const hudWaveVal = document.getElementById("hudWaveVal");
-    const hudState = document.getElementById("hudState");
-    
-    // Live hook into any range sliders or number inputs on the page
-    document.querySelectorAll('input[type="range"], input[type="number"]').forEach(input => {
-        input.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value) || 0;
-            if(window.activeVyomCore) {
-                const st = window.activeVyomCore.calculateWaveState(val);
-                hudWaveVal.innerText = st.waveValue.toFixed(2);
-                hudState.innerText = st.cosmicState.includes("Absolute") ? "0 = ∞ Duality" : "Harmonic Wave";
-            } else {
-                hudWaveVal.innerText = (Math.sin(val) * 100).toFixed(2);
-            }
-        });
-    });
-});
-</script>
-
-
-<!-- MICRO VYOM HUD v5.0 -->
-<style>
-#micro-vyom-hud {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    z-index: 99999;
-    background: rgba(3, 7, 18, 0.85);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(56, 189, 248, 0.4);
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-family: monospace;
-    font-size: 11px;
-    color: #38bdf8;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
-}
-#micro-vyom-hud:hover {
-    border-color: #38bdf8;
-    background: rgba(15, 23, 42, 0.95);
-}
-#micro-dropdown {
-    display: none;
-    position: absolute;
-    top: 35px;
-    right: 0;
-    width: 200px;
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(12px);
-    border: 1px solid #38bdf8;
-    border-radius: 10px;
-    padding: 12px;
-    color: #f3f4f6;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-}
-.micro-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    font-size: 11px;
-}
-</style>
-
-<div id="micro-vyom-hud" onclick="toggleMicroHud(event)">
-    <span>⚡ Vyom</span>
-    <span id="micro-val" style="color: #10b981;">0.00</span>
-    <div id="micro-dropdown" onclick="event.stopPropagation()">
-        <div class="micro-row"><span>State:</span> <span id="micro-state" style="color:#38bdf8;">Harmonic</span></div>
-        <div class="micro-row"><span>Duality:</span> <span style="color:#a855f7;">0 = ∞</span></div>
-        <input type="range" min="0" max="10" step="0.1" value="2.5" style="width:100%; margin-top:6px; accent-color:#38bdf8;" oninput="updateMicroSim(this.value)">
-    </div>
-</div>
-
-<script>
-function toggleMicroHud(e) {
-    e.stopPropagation();
-    const drop = document.getElementById("micro-dropdown");
-    drop.style.display = drop.style.display === "block" ? "none" : "block";
-}
-document.addEventListener("click", () => {
-    const drop = document.getElementById("micro-dropdown");
-    if(drop) drop.style.display = "none";
-});
-function updateMicroSim(val) {
-    let fVal = parseFloat(val);
-    let waveVal = Math.sin(fVal * Math.PI) * 100;
-    document.getElementById("micro-val").innerText = waveVal.toFixed(1);
-    let state = "Harmonic";
-    if(fVal === 0 || fVal >= 9.9) state = "0 = ∞ Duality";
-    document.getElementById("micro-state").innerText = state;
-}
-</script>
-\n</body>
+</body>
 </html>
