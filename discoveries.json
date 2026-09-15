@@ -385,5 +385,17 @@
         "resonance": "100.0%",
         "sa_score": 10.0,
         "timestamp": "2026-09-15 22:08:31"
+    },
+    {
+        "category": "Viral Protease Target",
+        "protein_target": "Genome polyprotein (P17763)",
+        "theta_target": 0.9370869,
+        "resolution_k": "2^64 (Hyper-Scale)",
+        "candidate": "Vyom-Sutra-Hyper64-510633",
+        "mw": 481.99,
+        "logp": 1.63,
+        "resonance": "100.0%",
+        "sa_score": 10.0,
+        "timestamp": "2026-09-15 22:11:15"
     }
 ]
