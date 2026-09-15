@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vyom Sutra | Clinical Intelligence Engine</title>
+    <title>Vyom Sutra | Clinical Intelligence Matrix</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#030712] text-slate-100 font-sans antialiased min-h-screen selection:bg-cyan-500 selection:text-black">
     <!-- Header -->
     <header class="border-b border-cyan-500/20 bg-[#030712]/95 backdrop-blur-2xl sticky top-0 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
                 <div class="w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_20px_#22d3ee] animate-pulse"></div>
-                <h1 class="text-lg sm:text-xl font-black tracking-wider text-white">VYOM SUTRA <span class="text-cyan-400 text-[10px] font-bold uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded-md ml-1">Clinical Engine</span></h1>
+                <h1 class="text-lg sm:text-xl font-black tracking-wider text-white">VYOM SUTRA <span class="text-cyan-400 text-[10px] font-bold uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded-md ml-1">Clinical Matrix & Chart</span></h1>
             </div>
             <div id="record-count" class="text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-xl shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                 Syncing Records...
@@ -21,15 +21,37 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 py-6 sm:py-10">
-        <div class="mb-6">
-            <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">Comprehensive Compound Pipeline</h2>
-            <p class="text-slate-400 text-xs sm:text-sm">Every medicine and novel discovery features comprehensive clinical passages, target proteins, and complete mechanisms of action.</p>
+    <main class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">Comprehensive Compound Pipeline Chart</h2>
+                <p class="text-slate-400 text-xs sm:text-sm">Structured tabular matrix featuring all clinical standards, target proteins, affinity metrics, and detailed mechanistic passages.</p>
+            </div>
+            <div class="bg-slate-900 border border-cyan-500/30 px-4 py-2 rounded-xl text-xs font-mono text-cyan-300">
+                Live Feed: <span class="text-emerald-400 font-bold">ACTIVE SYNC</span>
+            </div>
         </div>
 
-        <!-- Dynamic Card Container -->
-        <div id="cards-container" class="space-y-6">
-            <div class="p-12 text-center text-cyan-400 animate-pulse font-mono text-sm">Loading rich clinical records and passages...</div>
+        <!-- Table / Chart Container -->
+        <div class="bg-slate-900/80 border border-cyan-500/30 rounded-2xl shadow-[0_0_40px_rgba(34,211,238,0.05)] overflow-hidden backdrop-blur-xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-950/90 border-b border-cyan-500/20 text-[11px] font-extrabold uppercase tracking-widest text-cyan-400">
+                            <th class="p-4 sm:p-5">Compound Name & Type</th>
+                            <th class="p-4 sm:p-5">Target Protein & Status</th>
+                            <th class="p-4 sm:p-5">Scientific Metrics (Affinity / SA / Phase)</th>
+                            <th class="p-4 sm:p-5">Detailed Clinical Passage & Mechanism</th>
+                            <th class="p-4 sm:p-5 text-right">Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-800/80 text-xs sm:text-sm">
+                        <tr>
+                            <td colspan="5" class="p-10 text-center text-cyan-400 animate-pulse font-mono">Loading clinical matrix chart records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
@@ -41,81 +63,75 @@
                 
                 document.getElementById('record-count').innerText = `${data.length} Permanent Records`;
                 
-                const container = document.getElementById('cards-container');
-                container.innerHTML = '';
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = '';
 
                 data.forEach(item => {
                     const isComm = item.type && item.type.includes('Commercial');
-                    const mechText = item.mechanism || "Engineered via 256-bit cosmic harmonic field equations, deploying advanced receptor blockade and targeted molecular binding to achieve exceptional therapeutic efficacy.";
+                    const mechText = item.mechanism || "Engineered via 256-bit cosmic harmonic field equations, deploying advanced receptor blockade and targeted molecular binding.";
                     const statusText = item.status || "Active Clinical Pipeline Standard";
-                    const indText = item.indication || item.target_protein || "Advanced oncological and systemic target modulation.";
+                    const indText = item.indication || item.target_protein || "Advanced target modulation.";
 
-                    const card = document.createElement('div');
-                    card.className = "bg-slate-900/90 border border-cyan-500/40 rounded-2xl p-5 sm:p-7 shadow-[0_0_35px_rgba(34,211,238,0.06)] backdrop-blur-xl hover:border-cyan-400 transition-all";
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-800/50 transition-all";
                     
-                    card.innerHTML = `
-                        <!-- Header Row -->
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-4 border-b border-slate-800">
+                    tr.innerHTML = `
+                        <!-- Compound Name & Type -->
+                        <td class="p-4 sm:p-5 align-top">
+                            <span class="${isComm ? 'bg-purple-500/10 text-purple-400 border-purple-500/30' : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'} border px-2.5 py-0.5 rounded-md text-[10px] font-bold inline-block mb-1.5">${item.type || 'Clinical Standard'}</span>
+                            <div class="text-base font-black text-cyan-300 tracking-wide">${item.name}</div>
+                            <div class="mt-2 inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                                ${item.resonance || '100.0%'} Match
+                            </div>
+                        </td>
+
+                        <!-- Target Protein & Status -->
+                        <td class="p-4 sm:p-5 align-top space-y-2">
                             <div>
-                                <span class="${isComm ? 'bg-purple-500/10 text-purple-400 border-purple-500/30' : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'} border px-3 py-1 rounded-lg text-[11px] font-bold shadow-sm inline-block mb-2">${item.type || 'Clinical Standard'}</span>
-                                <h3 class="text-xl sm:text-2xl font-black text-cyan-300 tracking-wide">${item.name}</h3>
+                                <span class="text-[10px] font-bold uppercase text-slate-500 block">Target Protein:</span>
+                                <strong class="text-cyan-200 font-mono text-xs">${item.target_protein || 'Cosmic-Core'}</strong>
                             </div>
-                            <span class="${isComm ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'} border px-3 py-1.5 rounded-full text-xs font-black self-start sm:self-auto shadow-sm">${item.resonance || '100.0%'} Match</span>
-                        </div>
-                        
-                        <!-- Details Section -->
-                        <div class="space-y-4">
-                            <!-- Status & Indication Box -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-                                    <h4 class="text-[10px] font-extrabold uppercase tracking-widest text-cyan-400 mb-1">Operational Status:</h4>
-                                    <p class="text-xs text-slate-200 font-semibold">${statusText}</p>
-                                </div>
-                                <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-                                    <h4 class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 mb-1">Clinical Indication:</h4>
-                                    <p class="text-xs text-slate-200">${indText}</p>
-                                </div>
+                            <div>
+                                <span class="text-[10px] font-bold uppercase text-slate-500 block">Operational Status:</span>
+                                <span class="text-slate-300 text-xs font-semibold">${statusText}</span>
                             </div>
+                        </td>
 
-                            <!-- Mechanism of Action Box -->
-                            <div class="bg-slate-950/80 p-4 sm:p-5 rounded-xl border border-slate-800">
-                                <h4 class="text-xs font-extrabold uppercase tracking-widest text-cyan-400 mb-2 flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> Comprehensive Clinical Passage & Mechanistic Action:
+                        <!-- Scientific Metrics -->
+                        <td class="p-4 sm:p-5 align-top font-mono space-y-1.5 text-xs">
+                            <div class="bg-slate-950/80 p-2 rounded border border-slate-800">
+                                <span class="text-slate-500 text-[10px] block">Binding Affinity:</span>
+                                <strong class="text-emerald-400">${item.binding_affinity || '-10.5 kcal/mol'}</strong>
+                            </div>
+                            <div class="bg-slate-950/80 p-2 rounded border border-slate-800">
+                                <span class="text-slate-500 text-[10px] block">Phase Angle / SA:</span>
+                                <span class="text-amber-400 font-bold">${item.phase || '0.12 rad'}</span> | <span class="text-purple-400 font-bold">${item.sa_score || '10.0/10'}</span>
+                            </div>
+                        </td>
+
+                        <!-- Detailed Clinical Passage & Mechanism -->
+                        <td class="p-4 sm:p-5 align-top max-w-md">
+                            <div class="bg-slate-950/90 p-3.5 rounded-xl border border-slate-800/80 space-y-1.5">
+                                <h4 class="text-[10px] font-extrabold uppercase tracking-widest text-cyan-400 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span> Clinical Mechanism & Indication:
                                 </h4>
-                                <p class="text-sm sm:text-base text-slate-100 leading-relaxed text-justify font-normal">${mechText}</p>
+                                <p class="text-xs text-slate-200 leading-relaxed text-justify">${mechText}</p>
+                                <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-900">
+                                    <strong class="text-slate-400">Indication:</strong> ${indText}
+                                </div>
                             </div>
+                        </td>
 
-                            <!-- Scientific Metrics Grid -->
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs font-mono">
-                                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-                                    <span class="text-slate-500 block text-[10px]">Target Protein</span>
-                                    <strong class="text-cyan-300 truncate block">${item.target_protein || 'Cosmic-Core'}</strong>
-                                </div>
-                                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-                                    <span class="text-slate-500 block text-[10px]">Binding Affinity</span>
-                                    <strong class="text-emerald-400">${item.binding_affinity || '-10.5 kcal/mol'}</strong>
-                                </div>
-                                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-                                    <span class="text-slate-500 block text-[10px]">Phase Angle</span>
-                                    <strong class="text-amber-400">${item.phase || '0.12 rad'}</strong>
-                                </div>
-                                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-                                    <span class="text-slate-500 block text-[10px]">Lab SA Score</span>
-                                    <strong class="text-purple-400">${item.sa_score || '10.0/10'}</strong>
-                                </div>
-                            </div>
-
-                            <!-- Footer Metadata -->
-                            <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono pt-2 border-t border-slate-800/60">
-                                <span>Mode: ${item.mode || 'Harmonic Core'}</span>
-                                <span>Timestamp: ${item.timestamp || 'Live'}</span>
-                            </div>
-                        </div>
+                        <!-- Timestamp -->
+                        <td class="p-4 sm:p-5 align-top text-right font-mono text-[11px] text-slate-500 whitespace-nowrap">
+                            <div>${item.timestamp || 'Live'}</div>
+                            <div class="text-[10px] text-slate-600 mt-1">${item.mode || 'Harmonic Core'}</div>
+                        </td>
                     `;
-                    container.appendChild(card);
+                    tbody.appendChild(tr);
                 });
             } catch (err) {
-                console.error("Error loading discoveries:", err);
+                console.error("Error loading discoveries table:", err);
             }
         }
 
