@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-123631",
+        "name": "Gefitinib (1st Gen)",
+        "mw": 446.9,
+        "logp": 3.2,
+        "phase_angle": 1.3032,
+        "c_mu_nu": 2.33,
+        "affinity_score": 99.57,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:54:04"
+    },
+    {
         "id": "CID-49806720",
         "name": "Alectinib (ALK)",
         "mw": 483.6,
