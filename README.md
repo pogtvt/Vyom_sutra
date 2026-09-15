@@ -34,7 +34,7 @@
 * 🚀 **[Universe Simulation Engine](https://pogtvt.github.io/Vyom_sutra/universe_simulation.html)**
   *Universal scale-summation and cosmic field wave simulation engine.*
 
-* 🚀 **[Web States & System Monitor](https://pogtvt.github.io/Vyom_sutra/web_states.html)**
+* 🚀 **[Wave States & System Monitor](https://pogtvt.github.io/Vyom_sutra/wave_states.html)**
   *Real-time web state tracking, wave signal hierarchy, and dynamic state visualization module.*
 
 * 🚀 **[Fast Decision & NPC Game](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html)**
