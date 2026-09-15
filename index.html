@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vyom Sutra | Autonomous Drug Discovery Dashboard</title>
+    <title>Vyom Sutra | Autonomous Discovery & Generation Dashboard</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; }
+        .container { max-width: 1250px; margin: auto; }
         header { text-align: center; margin-bottom: 30px; }
         h1 { color: #38bdf8; margin-bottom: 5px; }
         p { color: #94a3b8; }
@@ -22,23 +22,25 @@
         .hit { background: #065f46; color: #34d399; }
         .moderate { background: #78350f; color: #fbbf24; }
         .noise { background: #7f1d1d; color: #f87171; }
+        .tag-gen { background: #1e3a8a; color: #93c5fd; padding: 3px 6px; border-radius: 4px; font-size: 11px; }
+        .tag-bench { background: #334155; color: #cbd5e1; padding: 3px 6px; border-radius: 4px; font-size: 11px; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Vyom Sutra Discovery Engine</h1>
-            <p>Deterministic $O(1)$ Molecular Affinity & Target Resonance Live Feed</p>
+            <h1>Vyom Sutra Discovery & Generation Engine</h1>
+            <p>Deterministic $O(1)$ Multi-Protein Screening & Dyadic Scale Inverse Generation</p>
         </header>
 
         <div class="stats">
             <div class="stat-box">
                 <h3 id="total-count">0</h3>
-                <span>Total Discoveries</span>
+                <span>Total Processed</span>
             </div>
             <div class="stat-box">
                 <h3 id="top-resonance">0%</h3>
-                <span>Max Resonance Score</span>
+                <span>Peak Resonance ($P$)</span>
             </div>
             <div class="stat-box">
                 <h3 id="last-update">Never</h3>
@@ -50,16 +52,17 @@
             <thead>
                 <tr>
                     <th>Timestamp</th>
-                    <th>Compound Name</th>
-                    <th>PubChem ID</th>
+                    <th>Compound Name & Mode</th>
+                    <th>MW / LogP</th>
                     <th>Phase Angle</th>
                     <th>Noise ($C_{\mu\nu}$)</th>
-                    <th>Resonance Alignment</th>
+                    <th>Resonance ($P$)</th>
+                    <th>Lab SA Score</th>
                     <th>Status</th>
                 </tr>
-            v>
+            </thead>
             <tbody id="discovery-table">
-                <tr><td colspan="7" style="text-align: center;">Loading discoveries...</td></tr>
+                <tr><td colspan="8" style="text-align: center;">Loading unified feed...</td></tr>
             </tbody>
         </table>
     </div>
@@ -84,13 +87,16 @@
                     if(item.status === 'Clean Target Hit') badgeClass = 'hit';
                     else if(item.status === 'Moderate Hit') badgeClass = 'moderate';
 
+                    let typeTag = item.type === 'Dyadic Inverse Generated' ? `<span class="tag-gen">Dyadic Gen</span>` : `<span class="tag-bench">Benchmark</span>`;
+
                     const row = `<tr>
                         <td>${item.timestamp}</td>
-                        <td><strong>${item.name}</strong></td>
-                        <td>${item.id}</td>
+                        <td><strong>${item.name}</strong><br>${typeTag}</td>
+                        <td>MW: ${item.mw}<br>LogP: ${item.logp}</td>
                         <td>${item.phase_angle} rad</td>
                         <td>${item.c_mu_nu}</td>
                         <td><strong>${item.affinity_score}%</strong></td>
+                        <td><span style="color: #34d399; font-weight: bold;">${item.sa_score}/10</span></td>
                         <td><span class="badge ${badgeClass}">${item.status}</span></td>
                     </tr>`;
                     tbody.innerHTML += row;
@@ -101,7 +107,7 @@
         }
 
         loadDiscoveries();
-        setInterval(loadDiscoveries, 5000); // हरेक ५ सेकेन्डमा फ्रन्टइन्ड अटो-रफ्रेस हुन्छ
+        setInterval(loadDiscoveries, 5000);
     </script>
 </body>
 </html>
