@@ -1,5 +1,17 @@
 [
   {
+    "timestamp": "2026-09-15 22:36:50",
+    "name": "Vyom-Sutra-Ultra128-EGFR-Exon20",
+    "mode": "Dyadic Gen (k=2^128 Ultra-Scale)",
+    "mw": 482.55,
+    "logp": 2.89,
+    "phase": "0.8412 rad",
+    "noise": "0",
+    "resonance": "100%",
+    "sa": "10.0/10",
+    "status": "Next-Gen Resistance Mutant Target"
+  },
+  {
     "timestamp": "2026-09-15 22:25:18",
     "name": "Vyom-Sutra-EGFR-L858R",
     "mode": "Dyadic Gen (Oncology)",
