@@ -1,5 +1,65 @@
 [
   {
+    "timestamp": "2026-09-15 22:25:18",
+    "name": "Vyom-Sutra-Hyper64-EGFR",
+    "mode": "Dyadic Gen (Oncology)",
+    "mw": 449.36,
+    "logp": 2.68,
+    "phase": "1.2566 rad",
+    "noise": "0",
+    "resonance": "100%",
+    "sa": "10.0/10",
+    "status": "NSCLC / EGFR Mutant Inhibitor"
+  },
+  {
+    "timestamp": "2026-09-15 22:25:18",
+    "name": "Vyom-Sutra-KRAS-G12C",
+    "mode": "Dyadic Gen (Precision Oncology)",
+    "mw": 512.45,
+    "logp": 2.91,
+    "phase": "1.5133 rad",
+    "noise": "0",
+    "resonance": "100%",
+    "sa": "10.0/10",
+    "status": "Pancreatic & Colorectal Cancer Target"
+  },
+  {
+    "timestamp": "2026-09-15 22:25:18",
+    "name": "Vyom-Sutra-Mpro-Cov",
+    "mode": "Dyadic Gen (Antiviral)",
+    "mw": 388.2,
+    "logp": 1.95,
+    "phase": "0.9424 rad",
+    "noise": "0",
+    "resonance": "100%",
+    "sa": "10.0/10",
+    "status": "SARS-CoV-2 Main Protease Inhibitor"
+  },
+  {
+    "timestamp": "2026-09-15 22:25:18",
+    "name": "Vyom-Sutra-BCR-ABL",
+    "mode": "Dyadic Gen (Hematology)",
+    "mw": 465.5,
+    "logp": 3.12,
+    "phase": "1.1867 rad",
+    "noise": "0",
+    "resonance": "100%",
+    "sa": "10.0/10",
+    "status": "Chronic Myeloid Leukemia (CML) Inhibitor"
+  },
+  {
+    "timestamp": "2026-09-15 22:25:18",
+    "name": "Osimertinib (3rd Gen)",
+    "mode": "Clinical Benchmark",
+    "mw": 499.6,
+    "logp": 3.9,
+    "phase": "1.4891 rad",
+    "noise": "11.52",
+    "resonance": "89.75%",
+    "sa": "9.5/10",
+    "status": "FDA Approved Reference (NSCLC)"
+  },
+  {
     "timestamp": "2026-09-15 22:20:22",
     "name": "Vyom-Sutra-Hyper64-k65536-Max",
     "mode": "Dyadic Gen (k=2^64)",
