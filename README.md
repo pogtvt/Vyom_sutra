@@ -10,6 +10,3 @@ You can explore the interactive web simulation directly:
 - `index.html` - Main HTML structure layout.
 - `style.css` - Custom UI styling and dark theme design.
 - `script.js` - Dynamic sine-wave canvas rendering and automated state-mapping logic.
-
-## Live Demo & Updates
-- [View Simulation](https://pogtvt.github.io/Vyom_sutra/)
