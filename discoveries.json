@@ -1,5 +1,18 @@
 [
     {
+        "id": "VYOM-GEN-55398",
+        "name": "Vyom-Sutra-k65536-698",
+        "type": "Dyadic Inverse Generated",
+        "mw": 396.64,
+        "logp": 3.84,
+        "phase_angle": 1.2566,
+        "c_mu_nu": 0.0,
+        "affinity_score": 100.0,
+        "sa_score": 9.2,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:54:11"
+    },
+    {
         "id": "CID-123631",
         "name": "Gefitinib (1st Gen)",
         "mw": 446.9,
