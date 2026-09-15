@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-3672",
+        "name": "Ibuprofen (Control)",
+        "mw": 206.28,
+        "logp": 3.5,
+        "phase_angle": 0.8038,
+        "c_mu_nu": 21.87,
+        "affinity_score": 66.36,
+        "status": "Filtered Noise",
+        "timestamp": "2026-09-15 17:23:08"
+    },
+    {
         "id": "CID-123631",
         "name": "Gefitinib (1st Gen)",
         "mw": 446.9,
