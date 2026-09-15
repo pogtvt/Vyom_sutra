@@ -10,7 +10,7 @@
 
 <br />
 
-[🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [🌌 **Universe Sim**](https://pogtvt.github.io/Vyom_sutra/universe_simulation.html) • [📊 **Web States**](https://pogtvt.github.io/Vyom_sutra/web_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) • [🎛️ **Synthesizer**](https://pogtvt.github.io/Vyom_sutra/synth.html) • [🏸 **Badminton Game**](https://pogtvt.github.io/Vyom_sutra/badminton.html) • [🎮 **Master Hub**](https://pogtvt.github.io/Vyom_sutra/index.html)
+[🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [🌌 **Universe Sim**](https://pogtvt.github.io/Vyom_sutra/universe_simulation.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) • [🎛️ **Synthesizer**](https://pogtvt.github.io/Vyom_sutra/synth.html) • [🏸 **Badminton Game**](https://pogtvt.github.io/Vyom_sutra/badminton.html) • [🎮 **Master Hub**](https://pogtvt.github.io/Vyom_sutra/index.html)
 
 </div>
 
