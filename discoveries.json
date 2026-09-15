@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-4091",
+        "name": "Metformin (Control)",
+        "mw": 129.16,
+        "logp": -1.4,
+        "phase_angle": 0.1442,
+        "c_mu_nu": 44.84,
+        "affinity_score": 8.42,
+        "status": "Filtered Noise",
+        "timestamp": "2026-09-15 17:23:46"
+    },
+    {
         "id": "CID-71496458",
         "name": "Osimertinib (3rd Gen)",
         "mw": 499.6,
