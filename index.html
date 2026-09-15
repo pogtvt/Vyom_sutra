@@ -2,102 +2,106 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vyom Sutra - Autonomous Drug Discovery</title>
+    <title>Vyom Sutra | Autonomous Drug Discovery Dashboard</title>
     <style>
-        body { background-color: #0d1117; color: #c9d1d9; font-family: monospace; padding: 20px; max-width: 800px; margin: auto; }
-        h1 { color: #58a6ff; }
-        .card { background: #161b22; border: 1px solid #30363d; padding: 12px; margin-bottom: 8px; border-radius: 6px; }
-        .success { color: #3fb950; font-weight: bold; }
-        .status-box { background: #21262d; border-left: 4px solid #238636; padding: 12px; border-radius: 6px; margin-bottom: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: #38bdf8; margin-bottom: 5px; }
+        p { color: #94a3b8; }
+        .stats { display: flex; justify-content: space-around; background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .stat-box { text-align: center; }
+        .stat-box h3 { margin: 0; color: #38bdf8; font-size: 24px; }
+        .stat-box span { color: #94a3b8; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; }
+        th { background: #334155; color: #38bdf8; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; }
+        tr:hover { background: #273548; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .hit { background: #065f46; color: #34d399; }
+        .moderate { background: #78350f; color: #fbbf24; }
+        .noise { background: #7f1d1d; color: #f87171; }
     </style>
 </head>
 <body>
-    <h1>🧬 Vyom Sutra: Autonomous Drug Discovery Terminal</h1>
-    <div class="status-box">
-        Status: <span class="success">● Public Archive Live via GitHub Pages</span><br>
-        <small>Automatically updated by background terminal execution.</small>
+    <div class="container">
+        <header>
+            <h1>Vyom Sutra Discovery Engine</h1>
+            <p>Deterministic $O(1)$ Molecular Affinity & Target Resonance Live Feed</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-box">
+                <h3 id="total-count">0</h3>
+                <span>Total Discoveries</span>
+            </div>
+            <div class="stat-box">
+                <h3 id="top-resonance">0%</h3>
+                <span>Max Resonance Score</span>
+            </div>
+            <div class="stat-box">
+                <h3 id="last-update">Never</h3>
+                <span>Last Sync Time</span>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Compound Name</th>
+                    <th>PubChem ID</th>
+                    <th>Phase Angle</th>
+                    <th>Noise ($C_{\mu\nu}$)</th>
+                    <th>Resonance Alignment</th>
+                    <th>Status</th>
+                </tr>
+            v>
+            <tbody id="discovery-table">
+                <tr><td colspan="7" style="text-align: center;">Loading discoveries...</td></tr>
+            </tbody>
+        </table>
     </div>
-    <h2>Discovered Compounds Database:</h2>
-    <div id="results">Loading discoveries...</div>
 
     <script>
         async function loadDiscoveries() {
             try {
-                let res = await fetch('discoveries.json?t=' + new Date().getTime());
-                let data = await res.json();
-                let html = '';
+                const response = await fetch('discoveries.json?t=' + new Date().getTime());
+                const data = await response.json();
+                
+                document.getElementById('total-count').innerText = data.length;
+                if(data.length > 0) {
+                    document.getElementById('top-resonance').innerText = data[0].affinity_score + '%';
+                    document.getElementById('last-update').innerText = data[0].timestamp;
+                }
+
+                const tbody = document.getElementById('discovery-table');
+                tbody.innerHTML = '';
+
                 data.forEach(item => {
-                    html += `<div class="card">
-                        <strong>ID:</strong> ${item.id} | <strong>Compound:</strong> ${item.name} <br>
-                        <strong>Binding Affinity Score:</strong> <span class="success">${item.affinity_score}%</span> <br>
-                        <small style="color: #8b949e;">Timestamp: ${item.timestamp}</small>
-                    </div>`;
+                    let badgeClass = 'noise';
+                    if(item.status === 'Clean Target Hit') badgeClass = 'hit';
+                    else if(item.status === 'Moderate Hit') badgeClass = 'moderate';
+
+                    const row = `<tr>
+                        <td>${item.timestamp}</td>
+                        <td><strong>${item.name}</strong></td>
+                        <td>${item.id}</td>
+                        <td>${item.phase_angle} rad</td>
+                        <td>${item.c_mu_nu}</td>
+                        <td><strong>${item.affinity_score}%</strong></td>
+                        <td><span class="badge ${badgeClass}">${item.status}</span></td>
+                    </tr>`;
+                    tbody.innerHTML += row;
                 });
-                document.getElementById('results').innerHTML = html;
-            } catch (e) {
-                document.getElementById('results').innerHTML = "Loading data...";
+            } catch (err) {
+                console.error('Error loading discoveries:', err);
             }
         }
+
         loadDiscoveries();
-        setInterval(loadDiscoveries, 10000);
+        setInterval(loadDiscoveries, 5000); // हरेक ५ सेकेन्डमा फ्रन्टइन्ड अटो-रफ्रेस हुन्छ
     </script>
-=======
-    <title>Vyom Sutra: Universal Sine-Wave Hierarchy</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="container">
-    <h1>Vyom Sutra: Universal Sine-Wave Hierarchy</h1>
-    <div class="subtitle">All States are Unified Sine-Wave Manifestations: Black Hole ⇌ Particle ⇌ Gravity ⇌ Dark Energy</div>
-
-    <div class="status-box" id="statusBox">
-        <div><strong>State:</strong> <span id="stateName">Dark Energy (Ultra-Long wavelength)</span></div>
-        <div><strong>Definition:</strong> <span id="stateDef">Ultra-Long Wavelength -> Undetectable Wave Field</span></div>
-    </div>
-
-    <canvas id="waveCanvas"></canvas>
-
-    <div class="controls">
-        <div class="control-group">
-            <label>Wave Frequency / Compression: <span id="freqVal">1.0</span> Hz</label>
-            <input type="range" id="freqSlider" min="0.2" max="25" step="0.1" value="1.0">
-            <label style="margin-top: 12px;">Wave Spread (Amplitude): <span id="ampVal">50</span></label>
-            <input type="range" id="ampSlider" min="10" max="90" step="1" value="50">
-        </div>
-        <div class="control-group">
-            <label>Select Wave Hierarchy State:</label>
-            <div class="btn-grid">
-                <button onclick="setMode('dark', 1.2)" id="btn-dark" class="active">Dark Energy</button>
-                <button onclick="setMode('gravity', 3.8)" id="btn-gravity">Gravity</button>
-                <button onclick="setMode('particle', 8.5)" id="btn-particle">Particle State</button>
-                <button onclick="setMode('bh', 21.0)" id="btn-bh">Black Hole</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="metrics-grid">
-        <div class="metric-card">
-            <span>WAVE STATE</span>
-            <strong id="mState">Dark Energy</strong>
-        </div>
-        <div class="metric-card">
-            <span>WAVELENGTH SCALE</span>
-            <strong id="mScale">Ultra-Long</strong>
-        </div>
-        <div class="metric-card">
-            <span>DETECTION STATUS</span>
-            <strong id="mDetect">Undetectable</strong>
-        </div>
-        <div class="metric-card">
-            <span>TOPOLOGY</span>
-            <strong id="mTopo">0 ⇌ Loop</strong>
-        </div>
-    </div>
-</div>
-
-<script src="script.js"></script>
->>>>>>> 04d7260012785c01fcb466983bfd1a3ba2eb85ff
 </body>
 </html>

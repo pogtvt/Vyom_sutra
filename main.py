@@ -19,6 +19,8 @@ COMPOUND_DATABASE = [
     {"name": "Dacomitinib (2nd Gen)", "cid": 11524144, "mw": 469.9, "logp": 3.3},
     {"name": "Osimertinib (3rd Gen)", "cid": 71496458, "mw": 499.6, "logp": 3.9},
     {"name": "Sotorasib (KRAS G12C)", "cid": 138338662, "mw": 560.6, "logp": 2.8},
+    {"name": "Alectinib (ALK)", "cid": 49806720, "mw": 483.6, "logp": 4.6},
+    {"name": "Vandetanib (VEGFR/EGFR)", "cid": 3081361, "mw": 475.4, "logp": 4.8},
     {"name": "Amoxicillin (Control)", "cid": 33613, "mw": 365.4, "logp": 0.9},
     {"name": "Ibuprofen (Control)", "cid": 3672, "mw": 206.28, "logp": 3.5},
     {"name": "Aspirin (Control)", "cid": 2244, "mw": 180.16, "logp": 1.2},
@@ -54,11 +56,13 @@ def evaluate_vyom_sutra(compound, theta_target=1.2566):
 
 def save_and_push(result):
     with open(DATA_FILE, "r") as f:
-        data = json.load(f)
+        try:
+            data = json.load(f)
+        except json.JSONDecodeError:
+            data = []
     
+    # लिमिट हटाइयो: सबै डिस्कभरीहरू सधैँ एड हुन्छन् (Unlimited History)
     data.insert(0, result)
-    if len(data) > 100:
-        data = data[:100]
         
     with open(DATA_FILE, "w") as f:
         json.dump(data, f, indent=4)
@@ -66,20 +70,20 @@ def save_and_push(result):
     print(f"[Vyom Engine] Screened: {result['name']} | Resonance: {result['affinity_score']}% | Status: {result['status']}")
     
     try:
-        subprocess.run(["git", "add", DATA_FILE], check=True)
-        subprocess.run(["git", "commit", "-m", f"Vyom Sutra Engine: Screened {result['name']}"], check=True)
-        subprocess.run(["git", "push"], check=True)
-        print("[GitHub Sync] Successfully pushed real calculation to GitHub!\n")
+        subprocess.run(["git", "add", DATA_FILE], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["git", "commit", "-m", f"Auto-discovery: {result['name']}"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["git", "push"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("[GitHub Sync] Pushed successfully!\n")
     except Exception as e:
-        print(f"[Git Error]: {e}\n")
+        print(f"[Git Sync Notice]: Waiting for network or queued ({e})\n")
 
 def background_loop():
-    print("🧬 Vyom Sutra Real Mathematical Discovery Engine Started...")
+    print("🧬 Vyom Sutra Autonomous Engine Started (5s interval, Unlimited History)...")
     while True:
         compound = random.choice(COMPOUND_DATABASE)
-        result = evaluate_evaluate = evaluate_vyom_sutra(compound)
+        result = evaluate_vyom_sutra(compound)
         save_and_push(result)
-        time.sleep(30)
+        time.sleep(5) # हरेक ५ सेकेन्डमा अल्ट्रा-फास्ट स्क्रीनिङ
 
 if __name__ == "__main__":
     background_loop()
