@@ -1,5 +1,11 @@
 [
     {
+        "id": "VYOM-59404",
+        "name": "Sutra-Valine-7",
+        "affinity_score": 98.76,
+        "timestamp": "2026-09-15 17:07:25"
+    },
+    {
         "id": "VYOM-76624",
         "name": "Wave-Target-Delta",
         "affinity_score": 98.33,
