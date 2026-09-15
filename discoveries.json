@@ -337,5 +337,17 @@
         "resonance": "99.0%",
         "sa_score": 9.95,
         "timestamp": "2026-09-15 20:13:45"
+    },
+    {
+        "category": "Neuroreceptor Target",
+        "protein_target": "Vyom-Synthesized Neuroreceptor Target - 9323",
+        "theta_target": 0.77763,
+        "resolution_k": 1048576,
+        "candidate": "Vyom-Sutra-k1048576-308896",
+        "mw": 370.57,
+        "logp": 2.26,
+        "resonance": "99.81%",
+        "sa_score": 9.91,
+        "timestamp": "2026-09-15 20:20:33"
     }
 ]
