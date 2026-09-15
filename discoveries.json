@@ -1,5 +1,17 @@
 [
   {
+    "timestamp": "2026-09-15 22:20:22",
+    "name": "Vyom-Sutra-Hyper64-k65536-Max",
+    "mode": "Dyadic Gen (k=2^64)",
+    "mw": 462.5,
+    "logp": 2.75,
+    "phase": "1.2566 rad",
+    "noise": "0",
+    "resonance": "100%",
+    "sa": "10.0/10",
+    "status": "Clean Target Hit"
+  },
+  {
     "timestamp": "2026-09-15 22:13:14",
     "name": "Vyom-Sutra-Hyper64",
     "mode": "Dyadic Gen",
