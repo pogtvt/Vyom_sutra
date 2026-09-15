@@ -11,7 +11,6 @@ if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, "w") as f:
         json.dump([], f)
 
-# वास्तविक कम्पाउन्डहरूको डाटाबेस (Vyom Sutra Research Brief बाट लिइएको)
 COMPOUND_DATABASE = [
     {"name": "Nazartinib / EGF816", "cid": 78357754, "mw": 463.9, "logp": 2.8},
     {"name": "Gefitinib (1st Gen)", "cid": 123631, "mw": 446.9, "logp": 3.2},
@@ -30,16 +29,10 @@ def evaluate_vyom_sutra(compound, theta_target=1.2566):
     mw = compound["mw"]
     logp = compound["logp"]
     
-    # १. Phase Angle Calculation (θ)
     theta_l = ((mw / 500.0) * 1.1 + (logp / 5.0) * 0.5) % math.pi
-    
-    # २. Ghost Tensor Noise Cancellation (C_μν)
     c_mu_nu = math.sin(abs(theta_target - theta_l)) * 50.0
-    
-    # ३. Binding Resonance Alignment (P %)
     resonance_p = math.exp(-2.0 * ((theta_target - theta_l) ** 2)) * 100.0
     
-    # Status निर्धारण
     if c_mu_nu < 15.0:
         status = "Clean Target Hit"
     elif c_mu_nu < 20.0:
@@ -74,7 +67,7 @@ def save_and_push(result):
     
     try:
         subprocess.run(["git", "add", DATA_FILE], check=True)
-        subprocess.run(["git", "commit", -m "Vyom Sutra Engine: Screened " + result['name']], check=True)
+        subprocess.run(["git", "commit", "-m", f"Vyom Sutra Engine: Screened {result['name']}"], check=True)
         subprocess.run(["git", "push"], check=True)
         print("[GitHub Sync] Successfully pushed real calculation to GitHub!\n")
     except Exception as e:
@@ -84,9 +77,9 @@ def background_loop():
     print("🧬 Vyom Sutra Real Mathematical Discovery Engine Started...")
     while True:
         compound = random.choice(COMPOUND_DATABASE)
-        result = evaluate_vyom_sutra(compound)
+        result = evaluate_evaluate = evaluate_vyom_sutra(compound)
         save_and_push(result)
-        time.sleep(30) # हरेक ३० सेकेन्डमा वास्तविक सूत्र लगाएर स्क्रीनिङ गर्छ र पुश गर्छ
+        time.sleep(30)
 
 if __name__ == "__main__":
     background_loop()
