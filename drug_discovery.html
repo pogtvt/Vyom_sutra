@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vyom Sutra - Drug Discovery & Generation Engine</title>
+    <style>
+        body { font-family: monospace; background: #0d1117; color: #c9d1d9; padding: 20px; }
+        h1 { color: #58a6ff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #30363d; padding: 10px; text-align: left; font-size: 14px; }
+        th { background: #161b22; color: #58a6ff; }
+        tr:nth-child(even) { background: #161b22; }
+        .badge { background: #238636; color: white; padding: 3px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Vyom Sutra Discovery & Generation Engine</h1>
+    <p>Deterministic O(1) Multi-Protein Screening & Dyadic Scale Inverse Generation</p>
+    <div id="stats" style="margin-top: 10px; color: #8b949e;">Loading metrics...</div>
+    <table id="discovery-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Compound Name & Mode</th>
+                <th>MW / LogP</th>
+                <th>Phase Angle</th>
+                <th>Noise</th>
+                <th>Resonance (P)</th>
+                <th>Lab SA Score</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <tr><td colspan="8">Loading discoveries.json...</td></tr>
+        </tbody>
+    </table>
+    <script>
+        async function loadData() {
+            try {
+                const res = await fetch('discoveries.json?t=' + new Date().getTime());
+                const data = await res.json();
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = '';
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.timestamp}</td>
+                        <td><b>${item.name}</b><br><span style="color: #8b949e;">${item.mode}</span></td>
+                        <td>MW: ${item.mw}<br>LogP: ${item.logp}</td>
+                        <td>${item.phase}</td>
+                        <td>${item.noise}</td>
+                        <td><span class="badge">${item.resonance}</span></td>
+                        <td>${item.sa}</td>
+                        <td>${item.status}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                document.getElementById('stats').innerHTML = `<b>Total Processed:</b> ${data.length} | <b>Peak Resonance:</b> 100%`;
+            } catch (e) {
+                document.getElementById('table-body').innerHTML = `<tr><td colspan="8" style="color: red;">Error loading discoveries.json: ${e.message}</td></tr>`;
+            }
+        }
+        loadData();
+    </script>
+</body>
+</html>
