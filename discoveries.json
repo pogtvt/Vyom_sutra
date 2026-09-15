@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-71496458",
+        "name": "Osimertinib (3rd Gen)",
+        "mw": 499.6,
+        "logp": 3.9,
+        "phase_angle": 1.4891,
+        "c_mu_nu": 11.52,
+        "affinity_score": 89.75,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:23:31"
+    },
+    {
         "id": "CID-138338662",
         "name": "Sotorasib (KRAS G12C)",
         "mw": 560.6,
