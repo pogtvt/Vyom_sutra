@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-11524144",
+        "name": "Dacomitinib (2nd Gen)",
+        "mw": 469.9,
+        "logp": 3.3,
+        "phase_angle": 1.3638,
+        "c_mu_nu": 5.35,
+        "affinity_score": 97.73,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:24:20"
+    },
+    {
         "id": "CID-71496458",
         "name": "Osimertinib (3rd Gen)",
         "mw": 499.6,
