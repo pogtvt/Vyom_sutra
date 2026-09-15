@@ -361,5 +361,17 @@
         "resonance": "99.1%",
         "sa_score": 9.95,
         "timestamp": "2026-09-15 15:22:30"
+    },
+    {
+        "category": "Epigenetic Target",
+        "protein_target": "Nucleosome assembly protein 1-like 2 (Q9ULW6)",
+        "theta_target": 0.94956,
+        "resolution_k": 1048576,
+        "candidate": "Vyom-Sutra-k1048576-987047",
+        "mw": 397.59,
+        "logp": 1.29,
+        "resonance": "99.1%",
+        "sa_score": 9.97,
+        "timestamp": "2026-09-15 15:45:58"
     }
 ]
