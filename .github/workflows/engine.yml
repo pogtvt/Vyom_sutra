@@ -2,8 +2,8 @@ name: Vyom Sutra Cloud Engine
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # हरेक ५-५ मिनेटमा क्लाउडमा अटोमेटिक चल्नेछ
-  workflow_dispatch:      # गिथब पेजबाटै क्लिक गरेर इन्स्ट्यान्ट रन गर्ने बटन
+    - cron: '*/5 * * * *' # हरेक ५-५ मिनेटमा चल्ने
+  workflow_dispatch:      # म्यानुअल रूपमा रन गर्ने बटन
 
 permissions:
   contents: write
