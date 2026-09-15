@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vyom Sutra - Autonomous Drug Discovery</title>
+    <style>
+        body { background-color: #0d1117; color: #c9d1d9; font-family: monospace; padding: 20px; max-width: 800px; margin: auto; }
+        h1 { color: #58a6ff; }
+        .card { background: #161b22; border: 1px solid #30363d; padding: 12px; margin-bottom: 8px; border-radius: 6px; }
+        .success { color: #3fb950; font-weight: bold; }
+        .status-box { background: #21262d; border-left: 4px solid #238636; padding: 12px; border-radius: 6px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🧬 Vyom Sutra: Autonomous Drug Discovery Terminal</h1>
+    <div class="status-box">
+        Status: <span class="success">● Public Archive Live via GitHub Pages</span><br>
+        <small>Automatically updated by background terminal execution.</small>
+    </div>
+    <h2>Discovered Compounds Database:</h2>
+    <div id="results">Loading discoveries...</div>
+
+    <script>
+        async function loadDiscoveries() {
+            try {
+                let res = await fetch('discoveries.json?t=' + new Date().getTime());
+                let data = await res.json();
+                let html = '';
+                data.forEach(item => {
+                    html += `<div class="card">
+                        <strong>ID:</strong> ${item.id} | <strong>Compound:</strong> ${item.name} <br>
+                        <strong>Binding Affinity Score:</strong> <span class="success">${item.affinity_score}%</span> <br>
+                        <small style="color: #8b949e;">Timestamp: ${item.timestamp}</small>
+                    </div>`;
+                });
+                document.getElementById('results').innerHTML = html;
+            } catch (e) {
+                document.getElementById('results').innerHTML = "Loading data...";
+            }
+        }
+        loadDiscoveries();
+        setInterval(loadDiscoveries, 10000);
+    </script>
+</body>
+</html>
