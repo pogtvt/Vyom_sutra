@@ -8,6 +8,17 @@
         "c_mu_nu": 3.49,
         "affinity_score": 99.03,
         "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:25:29"
+    },
+    {
+        "id": "CID-5329102",
+        "name": "Sunitinib (Multi-Kinase)",
+        "mw": 398.5,
+        "logp": 3.1,
+        "phase_angle": 1.1867,
+        "c_mu_nu": 3.49,
+        "affinity_score": 99.03,
+        "status": "Clean Target Hit",
         "timestamp": "2026-09-15 17:25:21"
     },
     {
