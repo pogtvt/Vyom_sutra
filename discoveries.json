@@ -1,5 +1,16 @@
 [
     {
+        "id": "CID-138338662",
+        "name": "Sotorasib (KRAS G12C)",
+        "mw": 560.6,
+        "logp": 2.8,
+        "phase_angle": 1.5133,
+        "c_mu_nu": 12.7,
+        "affinity_score": 87.65,
+        "status": "Clean Target Hit",
+        "timestamp": "2026-09-15 17:53:49"
+    },
+    {
         "id": "CID-3081361",
         "name": "Vandetanib (VEGFR/EGFR)",
         "mw": 475.4,
