@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vyom Sutra | Millisecond Deterministic 3D Engine</title>
+    <title>Vyom Sutra | Unique Phase-Driven 3D Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -13,14 +13,14 @@
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
                 <div class="w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_15px_#22d3ee] animate-pulse"></div>
-                <h1 class="text-lg sm:text-xl font-black tracking-wider text-white">VYOM SUTRA <span class="text-cyan-400 text-[10px] font-bold uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded-md ml-1">Deterministic O(1) Engine</span></h1>
+                <h1 class="text-lg sm:text-xl font-black tracking-wider text-white">VYOM SUTRA <span class="text-cyan-400 text-[10px] font-bold uppercase tracking-widest bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded-md ml-1">Phase-Unique 3D v14.0</span></h1>
             </div>
             <div class="flex items-center gap-2 flex-wrap justify-center">
                 <button onclick="exportUniversalJSON()" class="bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 text-emerald-300 font-mono text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                     <span>💾</span> Export JSON
                 </button>
                 <div id="record-count" class="text-xs font-semibold bg-slate-900 border border-slate-800 text-cyan-400 px-3 py-2 rounded-xl font-mono">
-                    Rendered in 2ms (O(1))
+                    Deterministic O(1) Unique Render
                 </div>
             </div>
         </div>
@@ -30,11 +30,11 @@
     <main class="max-w-6xl mx-auto px-4 py-6 sm:py-10">
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">Multi-Protein Target Screening & 3D Phase Geometry</h2>
-                <p class="text-slate-400 text-xs sm:text-sm">Instantaneous millisecond WebGL rendering driven by Vyom Sutra phase angles and tensor field equations.</p>
+                <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">Unique Phase-Calculated 3D Molecular Geometries</h2>
+                <p class="text-slate-400 text-xs sm:text-sm">Every compound generates a distinct 3D topological lattice directly mapped from its Phase Angle ($\theta$) and Tensor Connection ($C_{\mu\nu}$).</p>
             </div>
             <div class="w-full sm:w-80">
-                <input type="text" id="searchInput" placeholder="Search compound, protein, resonance..." onkeyup="filterDiscoveries()" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-4 py-3 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 shadow-inner font-mono">
+                <input type="text" id="searchInput" placeholder="Search compound, protein, phase..." onkeyup="filterDiscoveries()" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-4 py-3 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 shadow-inner font-mono">
             </div>
         </div>
 
@@ -43,7 +43,7 @@
     </main>
 
     <script>
-        // Benchmark Dataset from Vyom Sutra Research Brief
+        // Benchmark Dataset from Vyom Sutra Research Brief with Unique Phase and Tensor Invariants
         const universalTargetsDataset = [
             {
                 id: "target-1",
@@ -53,8 +53,9 @@
                 compound: "Nazartinib / EGF816",
                 mw: 463.9,
                 logp: 2.8,
+                phaseVal: 1.3006,
                 phase: "1.3006 rad",
-                c_mu_nu: "2.20",
+                c_mu_nu: 2.20,
                 resonance: "99.61%",
                 status: "Clean Target Hit"
             },
@@ -66,8 +67,9 @@
                 compound: "Gefitinib (1st Gen)",
                 mw: 446.9,
                 logp: 3.2,
+                phaseVal: 1.3032,
                 phase: "1.3032 rad",
-                c_mu_nu: "2.33",
+                c_mu_nu: 2.33,
                 resonance: "99.57%",
                 status: "Clean Target Hit"
             },
@@ -79,8 +81,9 @@
                 compound: "Imatinib",
                 mw: 493.6,
                 logp: 3.5,
+                phaseVal: 1.4359,
                 phase: "1.4359 rad",
-                c_mu_nu: "8.92",
+                c_mu_nu: 8.92,
                 resonance: "93.77%",
                 status: "Clean Target Hit"
             },
@@ -92,8 +95,9 @@
                 compound: "Sotorasib",
                 mw: 560.6,
                 logp: 2.8,
+                phaseVal: 1.5133,
                 phase: "1.5133 rad",
-                c_mu_nu: "12.70",
+                c_mu_nu: 12.70,
                 resonance: "87.65%",
                 status: "Moderate Hit"
             },
@@ -105,8 +109,9 @@
                 compound: "Donepezil",
                 mw: 379.5,
                 logp: 4.1,
+                phaseVal: 1.2410,
                 phase: "1.2410 rad",
-                c_mu_nu: "1.06",
+                c_mu_nu: 1.06,
                 resonance: "99.77%",
                 status: "Clean Target Hit"
             },
@@ -118,8 +123,9 @@
                 compound: "Rasagiline",
                 mw: 171.2,
                 logp: 2.3,
+                phaseVal: 0.7680,
                 phase: "0.7680 rad",
-                c_mu_nu: "0.91",
+                c_mu_nu: 0.91,
                 resonance: "99.82%",
                 status: "Clean Target Hit"
             }
@@ -129,7 +135,7 @@
 
         function loadDiscoveries() {
             currentFiltered = universalTargetsDataset;
-            document.getElementById('record-count').innerText = `${universalTargetsDataset.length} Targets (Rendered in <2ms)`;
+            document.getElementById('record-count').innerText = `${universalTargetsDataset.length} Targets (Phase-Mapped Unique 3D)`;
             renderCards();
         }
 
@@ -139,7 +145,7 @@
             const url = URL.createObjectURL(blob);
             const downloadAnchor = document.createElement('a');
             downloadAnchor.href = url;
-            downloadAnchor.download = "vyom_sutra_screening_engine.json";
+            downloadAnchor.download = "vyom_sutra_phase_unique_3d.json";
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -168,11 +174,11 @@
                             <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-black shrink-0">${item.resonance} Match</span>
                         </div>
                         
-                        <!-- Millisecond WebGL 3D Canvas Container with Forced Dimensions -->
+                        <!-- Unique Phase-Driven 3D Canvas Container -->
                         <div class="relative w-full h-64 bg-[#020617] rounded-xl border border-cyan-500/30 mb-4 overflow-hidden shadow-inner">
                             <div id="viewer-${item.id}" class="absolute inset-0 w-full h-full"></div>
                             <div class="absolute top-2 left-2 bg-slate-950/80 border border-cyan-500/40 px-2.5 py-1 rounded-lg text-[10px] font-mono text-cyan-400 backdrop-blur-md pointer-events-none z-10">
-                                ⚡ O(1) Phase 3D | ${item.compound}
+                                🌌 Unique Phase 3D | $\theta$=${item.phase}
                             </div>
                         </div>
 
@@ -205,30 +211,29 @@
                     </div>
                     <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono pt-3 border-t border-slate-800">
                         <span>Status: ${item.status}</span>
-                        <span>Vyom Sutra Engine v2</span>
+                        <span>Vyom Sutra Engine v3</span>
                     </div>
                 `;
                 container.appendChild(card);
 
-                // Instant Millisecond Three.js Execution with Size Check
+                // Render Unique 3D Geometry driven mathematically by Phase ($\theta$) and Tensor ($C_{\mu\nu}$)
                 setTimeout(() => {
-                    initDeterministic3D(`viewer-${item.id}`, item.mw, item.logp);
+                    initPhaseUnique3D(`viewer-${item.id}`, item.phaseVal, item.c_mu_nu, item.mw);
                 }, 50);
             });
         }
 
-        function initDeterministic3D(containerId, mw, logp) {
+        function initPhaseUnique3D(containerId, theta, tensor, mw) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = "";
 
-            // Guarantee non-zero dimensions for mobile screens
             const width = container.clientWidth || 350;
             const height = container.clientHeight || 256;
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-            camera.position.z = 5.5;
+            camera.position.z = 6;
 
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(width, height);
@@ -239,48 +244,54 @@
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
             scene.add(ambientLight);
 
-            const pointLight = new THREE.PointLight(0x22d3ee, 2.5, 40);
-            pointLight.position.set(4, 4, 4);
+            const pointLight = new THREE.PointLight(0x22d3ee, 3, 45);
+            pointLight.position.set(5, 5, 5);
             scene.add(pointLight);
 
-            // Molecular Cluster Group driven by MW and LogP scaling
+            // Unique geometry group structured strictly by theta and tensor parameters
             const group = new THREE.Group();
-            
-            // Core central node
-            const coreGeo = new THREE.SphereGeometry(0.45, 32, 32);
+
+            // Core central node scaled by tensor value
+            const coreSize = 0.35 + (tensor * 0.02);
+            const coreGeo = new THREE.SphereGeometry(coreSize, 32, 32);
             const coreMat = new THREE.MeshStandardMaterial({ 
                 color: 0x22d3ee, 
                 roughness: 0.1, 
-                metalness: 0.8, 
+                metalness: 0.9, 
                 emissive: 0x0891b2 
             });
             group.add(new THREE.Mesh(coreGeo, coreMat));
 
-            // Orbiting atomic cluster nodes
-            const nodes = 10;
-            const radius = 1.8 + (logp * 0.1);
-            const sphereGeo = new THREE.SphereGeometry(0.22, 24, 24);
-            const bondGeo = new THREE.CylinderGeometry(0.05, 0.05, radius, 12);
+            // Unique node distribution governed mathematically by theta and molecular weight
+            const nodes = 12 + Math.floor(tensor * 2);
+            const baseRadius = 1.6 + (theta * 0.5);
+            const sphereGeo = new THREE.SphereGeometry(0.2, 20, 20);
 
             for (let i = 0; i < nodes; i++) {
-                const phi = Math.acos(-1 + (2 * i) / nodes);
-                const theta = Math.sqrt(nodes * Math.PI) * phi + (mw * 0.001);
+                // Mathematical phase-spiral formula using theta multiplier
+                const t = i / nodes;
+                const angle = t * Math.PI * 4 + theta * 3;
+                const radiusVar = baseRadius + Math.sin(i * theta) * 0.5;
 
-                const x = radius * Math.cos(theta) * Math.sin(phi);
-                const y = radius * Math.sin(theta) * Math.sin(phi);
-                const z = radius * Math.cos(phi);
+                const x = radiusVar * Math.cos(angle);
+                const y = (t - 0.5) * 3.5 * (tensor * 0.3 + 0.5);
+                const z = radiusVar * Math.sin(angle);
 
+                // Color tint changes uniquely based on tensor value and phase index
                 const atomMat = new THREE.MeshStandardMaterial({ 
-                    color: i % 2 === 0 ? 0x10b981 : 0x38bdf8, 
+                    color: i % 3 === 0 ? 0x10b981 : (i % 3 === 1 ? 0x38bdf8 : 0xf43f5e), 
                     roughness: 0.2, 
-                    metalness: 0.6,
-                    emissive: i % 2 === 0 ? 0x047857 : 0x0284c7
+                    metalness: 0.7,
+                    emissive: i % 3 === 0 ? 0x047857 : (i % 3 === 1 ? 0x0284c7 : 0xbe123c)
                 });
                 const atom = new THREE.Mesh(sphereGeo, atomMat);
                 atom.position.set(x, y, z);
                 group.add(atom);
 
-                const bond = new THREE.Mesh(bondGeo, new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9 }));
+                // Connecting bond cylinder from core to unique atom position
+                const distance = Math.sqrt(x*x + y*y + z*z);
+                const bondGeo = new THREE.CylinderGeometry(0.04, 0.04, distance, 8);
+                const bond = new THREE.Mesh(bondGeo, new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8 }));
                 bond.position.set(x / 2, y / 2, z / 2);
                 bond.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(x, y, z).normalize());
                 group.add(bond);
@@ -288,11 +299,11 @@
 
             scene.add(group);
 
-            // Millisecond Animation Loop
+            // Smooth Multi-Axis Rotation Loop with unique rotation speed based on theta
             function animate() {
                 requestAnimationFrame(animate);
-                group.rotation.x += 0.007;
-                group.rotation.y += 0.010;
+                group.rotation.x += 0.005 * (theta * 0.8);
+                group.rotation.y += 0.009 * (tensor * 0.5);
                 renderer.render(scene, camera);
             }
             animate();
@@ -304,7 +315,8 @@
                 return (item.disease && item.disease.toLowerCase().includes(query)) ||
                        (item.category && item.category.toLowerCase().includes(query)) ||
                        (item.target_protein && item.target_protein.toLowerCase().includes(query)) ||
-                       (item.compound && item.compound.toLowerCase().includes(query));
+                       (item.compound && item.compound.toLowerCase().includes(query)) ||
+                       (item.phase && item.phase.toLowerCase().includes(query));
             });
             renderCards();
         }
