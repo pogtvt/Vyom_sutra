@@ -9,7 +9,7 @@ content = """# 🚀 Vyom Sutra
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg?style=for-the-badge)](https://www.python.org/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22247703-blueviolet.svg?style=for-the-badge)](https://doi.org/10.5281/zenodo.22247703)
 
-[💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [🌌 **Universe Simulation**](https://github.com/pogtvt/Vyom_sutra/blob/main/universe_simulation.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) • [🎛️ **Synth**](https://pogtvt.github.io/Vyom_sutra/synth.html) • [🏸 **Badminton**](https://pogtvt.github.io/Vyom_sutra/badminton.html) • [ **Hub**](https://pogtvt.github.io/Vyom_sutra/index.html)
+[💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [🌌 **Universe Simulation**](https://github.com/pogtvt/Vyom_sutra/blob/main/universe_simulation.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) • [🎛️ **Synth**](https://pogtvt.github.io/Vyom_sutra/synth.html) • ](https://pogtvt.github.io/Vyom_sutra/badminton.html) • [ **Hub**](https://pogtvt.github.io/Vyom_sutra/index.html)
 
 </div>
 
