@@ -47,7 +47,7 @@ content = """# 🚀 Vyom Sutra
 ## 🎛️ 3. Interactive Web Modules & Games
 
 * **[Vyom Wave Synthesizer](https://pogtvt.github.io/Vyom_sutra/synth.html)** - Web Audio API signal generator with custom frequency sliders.
-* **[Badminton Physics Game](https://pogtvt.github.io/Vyom_sutra/badminton.html)** - Real-time canvas physics engine calculating gravity vectors and collisions.
+
 * **[Master Dashboard Hub](https://pogtvt.github.io/Vyom_sutra/index.html)** - Central interactive dashboard connecting all active modules.
 
 ---
