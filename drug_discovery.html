@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vyom Sutra | 3D-HDPA CADD Suite & Live Screener</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- MathJax for LaTeX Rendering -->
     <script>
         window.MathJax = {
             tex: {
@@ -21,8 +18,6 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="bg-[#020617] text-slate-100 font-sans antialiased min-h-screen selection:bg-cyan-500 selection:text-black">
-
-    <!-- Header -->
     <header class="border-b border-cyan-500/20 bg-[#030712]/95 backdrop-blur-2xl sticky top-0 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
@@ -35,20 +30,16 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 flex-wrap justify-center">
-                <button onclick="scrollToSection('custom-input-section')" class="bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/50 text-cyan-300 font-mono text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                <button onclick="scrollToSection('custom-input-section')" class="bg-cyan-500/25 hover:bg-cyan-500/30 border border-cyan-400/50 text-cyan-300 font-mono text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
                     <span>➕</span> Add Custom Compound
                 </button>
-                <button onclick="exportUniversalJSON()" class="bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 text-emerald-300 font-mono text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                <button onclick="exportUniversalJSON()" class="bg-emerald-500/25 hover:bg-emerald-500/30 border border-emerald-400/50 text-emerald-300 font-mono text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                     <span>💾</span> Export Results JSON
                 </button>
             </div>
         </div>
     </header>
-
-    <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-8">
-
-        <!-- 1. Research Hero Banner & Key Metrics -->
         <div class="p-6 bg-gradient-to-r from-cyan-950/60 via-slate-900/90 to-purple-950/60 border border-cyan-500/40 rounded-3xl shadow-2xl relative overflow-hidden backdrop-blur-xl">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 relative z-10">
                 <div class="max-w-3xl">
@@ -60,7 +51,6 @@
                     <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
                         Maps 2D physicochemical invariants + 3D USR distance moments $(R_{ctd}, R_{cst}, R_{farthest})$ into a polar harmonic phase space $(\theta)$. Screens $10^6+$ compounds deterministically in $O(1)$ time with 0.00% decoy noise leakage.
                     </p>
-                    
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
                         <div class="bg-slate-950/80 border border-cyan-500/30 p-2.5 rounded-xl text-center">
                             <span class="text-slate-400 block text-[10px] uppercase">ROC-AUC Score</span>
@@ -80,8 +70,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Dynamic Parametric Gain & Target Selector Controller -->
                 <div class="w-full lg:w-80 bg-slate-950/90 border border-amber-500/40 p-4 rounded-2xl shadow-xl font-mono space-y-4">
                     <div>
                         <label class="text-xs font-bold text-amber-400 uppercase tracking-wider block mb-1">Target Pocket Selection:</label>
@@ -92,7 +80,6 @@
                             <option value="1.2410">AChE Active Site ($\theta = 1.2410\text{ rad}$)</option>
                         </select>
                     </div>
-
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <label class="text-xs font-bold text-amber-400 uppercase tracking-wider">Parametric Gain ($k_{gain}$):</label>
@@ -106,8 +93,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- 2. Custom Compound Screener Form (Interactive Custom Input) -->
         <div id="custom-input-section" class="p-6 bg-slate-900/90 border border-cyan-500/40 rounded-3xl shadow-xl font-mono">
             <div class="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
                 <span class="text-xl">🧪</span>
@@ -153,8 +138,6 @@
                 </div>
             </form>
         </div>
-
-        <!-- 3. Dynamic Compound Cards Display Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h3 class="text-xl font-bold text-white tracking-wide">Screened Compounds Database: <span id="current-target-label" class="text-cyan-400 font-mono text-base">EGFR WT Pocket ($\theta_{target} = 1.2566\text{ rad}$)</span></h3>
@@ -164,24 +147,19 @@
                 <input type="text" id="searchInput" placeholder="Search ligand, status, target..." onkeyup="filterDiscoveries()" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 shadow-inner font-mono">
             </div>
         </div>
-
-        <!-- Dynamic Card Grid Container -->
         <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-        <!-- 4. Mathematical Theorems & Methodological Proofs Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
             <div class="bg-slate-900/90 border border-purple-500/30 p-6 rounded-2xl shadow-xl">
                 <h4 class="text-sm font-black text-purple-300 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <span>📐</span> Theorem 1: Parametric Noise Cancellation
                 </h4>
                 <p class="text-slate-300 leading-relaxed mb-3">
-                    Let $\Delta\theta = |\theta_{target} - \theta_{ligand}|$. The noise tensor $C_{\mu\nu}^{(k)} = 100 \cdot |\sin(k_{gain} \cdot \Delta\theta)|$ converges strictly to zero as $\Delta\theta \to 0$. As $k_{gain} \ge 2.0$, off-target decoy signals outside the resonance phase window are exponentially suppressed, driving decoy false-positives to 0.00%.
+                    Let $\Delta\theta = \vert{}\theta_{target} - \theta_{ligand}\vert{}$. The noise tensor $C_{\mu\nu}^{(k)} = 100 \cdot \vert{}\sin(k_{gain} \cdot \Delta\theta)\vert{}$ converges strictly to zero as $\Delta\theta \to 0$. As $k_{gain} \ge 2.0$, off-target decoy signals outside the resonance phase window are exponentially suppressed, driving decoy false-positives to 0.00%.
                 </p>
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-cyan-400 text-center">
                     $$\lim_{\Delta\theta \to 0} S_{bioassay}(\Delta\theta, k_{gain}) = 100.00\%$$
                 </div>
             </div>
-
             <div class="bg-slate-900/90 border border-cyan-500/30 p-6 rounded-2xl shadow-xl">
                 <h4 class="text-sm font-black text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <span>⚡</span> Theorem 2: Deterministic O(1) Complexity Proof
@@ -194,8 +172,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- 5. Comparative Benchmark Matrix Table (Paper Support) -->
         <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl shadow-xl font-mono">
             <h4 class="text-base font-black text-white mb-4 flex items-center gap-2">
                 <span>📊</span> CADD Methodological Comparison Matrix (Benchmark Verification)
@@ -249,99 +225,68 @@
                 </table>
             </div>
         </div>
-
     </main>
-
     <script>
         let currentKgain = 2.0;
-        let targetTheta = 1.2566; // Default: EGFR Wild-Type Pocket
-        let activeInstances = {}; // Store WebGL renderers, animIds, and geometries for full memory cleanup
-
-        // Dataset
+        let targetTheta = 1.2566;
+        let activeInstances = {};
         let universalTargetsDataset = [
             {
                 id: "target-1",
                 compound: "Nazartinib (EGF816)",
                 category: "Oncology Lead",
                 target_protein: "EGFR Kinase Pocket",
-                mw: 463.9,
-                logp: 2.8,
-                hbd_hba: "2 / 7",
-                tpsa: 83.5,
+                mw: 463.9, logp: 2.8, hbd_hba: "2 / 7", tpsa: 83.5,
                 usr_moments: { r_ctd: 3.42, r_cst: 1.12, r_farthest: 7.85 },
-                phaseVal: 1.2601,
-                status: "High-Affinity Hit"
+                phaseVal: 1.2601, status: "High-Affinity Hit"
             },
             {
                 id: "target-2",
                 compound: "Gefitinib (1st Gen)",
                 category: "Clinical Inhibitor",
                 target_protein: "EGFR Kinase Pocket",
-                mw: 446.9,
-                logp: 3.2,
-                hbd_hba: "1 / 6",
-                tpsa: 68.7,
+                mw: 446.9, logp: 3.2, hbd_hba: "1 / 6", tpsa: 68.7,
                 usr_moments: { r_ctd: 3.28, r_cst: 1.05, r_farthest: 7.41 },
-                phaseVal: 1.2685,
-                status: "High-Affinity Hit"
+                phaseVal: 1.2685, status: "High-Affinity Hit"
             },
             {
                 id: "target-3",
                 compound: "Erlotinib (1st Gen)",
                 category: "Clinical Inhibitor",
                 target_protein: "EGFR Kinase Pocket",
-                mw: 393.4,
-                logp: 3.3,
-                hbd_hba: "1 / 6",
-                tpsa: 74.7,
+                mw: 393.4, logp: 3.3, hbd_hba: "1 / 6", tpsa: 74.7,
                 usr_moments: { r_ctd: 3.15, r_cst: 0.98, r_farthest: 6.92 },
-                phaseVal: 1.2215,
-                status: "High-Affinity Hit"
+                phaseVal: 1.2215, status: "High-Affinity Hit"
             },
             {
                 id: "target-4",
                 compound: "Osimertinib (3rd Gen)",
                 category: "Mutant Lead",
                 target_protein: "EGFR T790M Pocket",
-                mw: 499.6,
-                logp: 3.9,
-                hbd_hba: "1 / 7",
-                tpsa: 86.4,
+                mw: 499.6, logp: 3.9, hbd_hba: "1 / 7", tpsa: 86.4,
                 usr_moments: { r_ctd: 3.85, r_cst: 1.20, r_farthest: 8.30 },
-                phaseVal: 1.4891,
-                status: "Target Specific"
+                phaseVal: 1.4891, status: "Target Specific"
             },
             {
                 id: "target-5",
                 compound: "Sotorasib (KRAS G12C)",
                 category: "KRAS Inhibitor",
                 target_protein: "KRAS G12C Pocket",
-                mw: 560.6,
-                logp: 2.8,
-                hbd_hba: "1 / 8",
-                tpsa: 99.1,
+                mw: 560.6, logp: 2.8, hbd_hba: "1 / 8", tpsa: 99.1,
                 usr_moments: { r_ctd: 4.10, r_cst: 1.35, r_farthest: 8.90 },
-                phaseVal: 1.5133,
-                status: "Off-Target Control"
+                phaseVal: 1.5133, status: "Off-Target Control"
             },
             {
                 id: "target-6",
                 compound: "Amoxicillin (Decoy)",
                 category: "Negative Control",
                 target_protein: "Non-Kinase Decoy",
-                mw: 365.4,
-                logp: 0.9,
-                hbd_hba: "4 / 6",
-                tpsa: 133.0,
+                mw: 365.4, logp: 0.9, hbd_hba: "4 / 6", tpsa: 133.0,
                 usr_moments: { r_ctd: 2.80, r_cst: 0.85, r_farthest: 6.10 },
-                phaseVal: 0.8939,
-                status: "Filtered Decoy"
+                phaseVal: 0.8939, status: "Filtered Decoy"
             }
         ];
-
         let currentFiltered = universalTargetsDataset;
-
-        // Proper GPU & WebGL Memory Disposal
         function clearPreviousRenderers() {
             Object.keys(activeInstances).forEach(id => {
                 const instance = activeInstances[id];
@@ -360,18 +305,13 @@
             });
             activeInstances = {};
         }
-
         function calculateHDPA(phaseVal, kgain, targetP) {
             const deltaTheta = Math.abs(targetP - phaseVal);
             const c_mu_nu = 100 * Math.abs(Math.sin(kgain * deltaTheta));
             const s_resonance = 100 * Math.pow(Math.cos(deltaTheta / 2), 2) * Math.exp(-2.0 * Math.pow(deltaTheta, 2));
             const s_bioassay = Math.max(0, s_resonance * (1 - (c_mu_nu / 100)));
-            return {
-                c_mu_nu: c_mu_nu.toFixed(2),
-                s_bioassay: s_bioassay.toFixed(2)
-            };
+            return { c_mu_nu: c_mu_nu.toFixed(2), s_bioassay: s_bioassay.toFixed(2) };
         }
-
         function computePhaseFromDescriptors(mw, logp, tpsa, r_ctd) {
             const norm_mw = (mw / 500) * 0.35;
             const norm_logp = (logp / 5) * 0.25;
@@ -380,7 +320,6 @@
             const phase = ((norm_mw + norm_logp + norm_tpsa + norm_usr) * Math.PI) % Math.PI;
             return parseFloat(phase.toFixed(4));
         }
-
         function changeTargetPocket(val) {
             targetTheta = parseFloat(val);
             const selectEl = document.getElementById('targetSelect');
@@ -388,13 +327,11 @@
             document.getElementById('current-target-label').innerHTML = `${targetName}`;
             renderCards();
         }
-
         function updateKgains(val) {
             currentKgain = parseFloat(val);
             document.getElementById('kgain-display').innerText = currentKgain.toFixed(1);
             renderCards();
         }
-
         function handleCustomSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('c_name').value;
@@ -405,45 +342,34 @@
             const r_ctd = parseFloat(document.getElementById('c_r_ctd').value);
             const r_cst = parseFloat(document.getElementById('c_r_cst').value);
             const r_farthest = parseFloat(document.getElementById('c_r_farthest').value);
-
             const computedPhase = computePhaseFromDescriptors(mw, logp, tpsa, r_ctd);
-
             const newCompound = {
                 id: "custom-" + Date.now(),
                 compound: name + " (User Input)",
                 category: "Custom Screener",
                 target_protein: "Active Target Pocket",
-                mw: mw,
-                logp: logp,
-                hbd_hba: hbd_hba,
-                tpsa: tpsa,
+                mw: mw, logp: logp, hbd_hba: hbd_hba, tpsa: tpsa,
                 usr_moments: { r_ctd: r_ctd, r_cst: r_cst, r_farthest: r_farthest },
-                phaseVal: computedPhase,
-                status: "User Screened"
+                phaseVal: computedPhase, status: "User Screened"
             };
-
             universalTargetsDataset.unshift(newCompound);
             currentFiltered = universalTargetsDataset;
             renderCards();
             alert(`✅ Compound "${name}" successfully screened!\nComputed Phase Angle θ = ${computedPhase} rad`);
             document.getElementById('customCompoundForm').reset();
         }
-
         function renderCards() {
             clearPreviousRenderers();
             const container = document.getElementById('cards-container');
             container.innerHTML = '';
-
             if (currentFiltered.length === 0) {
                 container.innerHTML = `<div class="col-span-full p-12 text-center text-slate-500 font-mono text-sm">No matching screening targets found.</div>`;
                 return;
             }
-
             currentFiltered.forEach(item => {
                 const hdpa = calculateHDPA(item.phaseVal, currentKgain, targetTheta);
                 const card = document.createElement('div');
                 card.className = "bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-5 shadow-xl backdrop-blur-xl hover:border-cyan-400 transition-all flex flex-col justify-between";
-                
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start gap-2 mb-3 pb-3 border-b border-slate-800">
@@ -455,14 +381,12 @@
                                 ${hdpa.s_bioassay}% Fit
                             </span>
                         </div>
-                        
                         <div class="relative w-full h-48 bg-[#020617] rounded-xl border border-cyan-500/20 mb-3 overflow-hidden shadow-inner">
                             <div id="viewer-${item.id}" class="absolute inset-0 w-full h-full"></div>
                             <div class="absolute top-2 left-2 bg-slate-950/80 border border-cyan-500/40 px-2 py-0.5 rounded-md text-[9px] font-mono text-cyan-400 backdrop-blur-md pointer-events-none z-10">
                                 🌌 3D Lattice | $\\theta=${item.phaseVal}\\text{ rad}$
                             </div>
                         </div>
-
                         <div class="bg-slate-950/80 p-2 rounded-xl border border-slate-800 mb-3 font-mono text-[10px]">
                             <span class="text-slate-400 block text-[9px] font-bold uppercase tracking-wider mb-1 text-cyan-400">3D USR Moments (Å):</span>
                             <div class="flex justify-between text-slate-300">
@@ -471,18 +395,17 @@
                                 <span>R_farthest: <strong class="text-white">${item.usr_moments.r_farthest}</strong></span>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-2 gap-2 font-mono text-[10px] mb-3">
                             <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
                                 <span class="text-slate-500 block uppercase">MW / LogP</span>
                                 <strong class="text-slate-200">${item.mw} / ${item.logp}</strong>
                             </div>
                             <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                                <span class="text-slate-500 block uppercase">Phase Angle ($\theta$)</span>
+                                <span class="text-slate-500 block uppercase">Phase Angle (\\(\\theta\\))</span>
                                 <strong class="text-amber-400">${item.phaseVal} rad</strong>
                             </div>
                             <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                                <span class="text-slate-500 block uppercase">Noise Tensor ($C_{\\mu\\nu}$)</span>
+                                <span class="text-slate-500 block uppercase">Noise Tensor (\\(C_{\\mu\\nu}\\))</span>
                                 <strong class="${parseFloat(hdpa.c_mu_nu) > 15 ? 'text-rose-400' : 'text-purple-300'}">${hdpa.c_mu_nu}</strong>
                             </div>
                             <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
@@ -497,120 +420,75 @@
                     </div>
                 `;
                 container.appendChild(card);
-
                 setTimeout(() => {
                     initPhaseUnique3D(`viewer-${item.id}`, item.phaseVal, parseFloat(hdpa.c_mu_nu));
                 }, 50);
             });
-
-            // Safe MathJax Async Typeset Execution
             if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise().catch(function (err) {
-                    console.warn("MathJax formatting caught cleanly:", err.message);
-                });
+                window.MathJax.typesetPromise().catch(err => console.warn(err.message));
             }
         }
-
         function initPhaseUnique3D(containerId, theta, tensor) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = "";
-
             const width = container.clientWidth || 300;
             const height = container.clientHeight || 190;
-
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
             camera.position.z = 5.2;
-
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(width, height);
             renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
             container.appendChild(renderer.domElement);
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-            scene.add(ambientLight);
-
+            scene.add(new THREE.AmbientLight(0xffffff, 0.9));
             const pointLight = new THREE.PointLight(0x22d3ee, 3, 40);
             pointLight.position.set(5, 5, 5);
             scene.add(pointLight);
-
             const group = new THREE.Group();
-            const geometries = [];
-            const materials = [];
-
+            const geometries = []; const materials = [];
             const coreSize = 0.28 + (tensor * 0.004);
             const coreGeo = new THREE.SphereGeometry(coreSize, 24, 24);
-            const coreMat = new THREE.MeshStandardMaterial({ 
-                color: 0x22d3ee, 
-                roughness: 0.1, 
-                metalness: 0.9, 
-                emissive: 0x0891b2 
-            });
-            geometries.push(coreGeo);
-            materials.push(coreMat);
+            const coreMat = new THREE.MeshStandardMaterial({ color: 0x22d3ee, roughness: 0.1, metalness: 0.9, emissive: 0x0891b2 });
+            geometries.push(coreGeo); materials.push(coreMat);
             group.add(new THREE.Mesh(coreGeo, coreMat));
-
             const nodes = 10;
             const baseRadius = 1.4 + (theta * 0.2);
             const sphereGeo = new THREE.SphereGeometry(0.16, 16, 16);
             geometries.push(sphereGeo);
-
             for (let i = 0; i < nodes; i++) {
                 const t = i / nodes;
                 const angle = t * Math.PI * 4 + theta * 2;
                 const radiusVar = baseRadius + Math.sin(i * theta) * 0.4;
-
                 const x = radiusVar * Math.cos(angle);
                 const y = (t - 0.5) * 2.8;
                 const z = radiusVar * Math.sin(angle);
-
-                const atomMat = new THREE.MeshStandardMaterial({ 
-                    color: i % 3 === 0 ? 0x10b981 : (i % 3 === 1 ? 0x38bdf8 : 0xf43f5e), 
-                    roughness: 0.2, 
-                    metalness: 0.7 
-                });
+                const atomMat = new THREE.MeshStandardMaterial({ color: i % 3 === 0 ? 0x10b981 : (i % 3 === 1 ? 0x38bdf8 : 0xf43f5e), roughness: 0.2, metalness: 0.7 });
                 materials.push(atomMat);
                 const atom = new THREE.Mesh(sphereGeo, atomMat);
                 atom.position.set(x, y, z);
                 group.add(atom);
-
                 const distance = Math.sqrt(x*x + y*y + z*z);
                 const bondGeo = new THREE.CylinderGeometry(0.03, 0.03, distance, 8);
                 const bondMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8 });
-                geometries.push(bondGeo);
-                materials.push(bondMat);
-
+                geometries.push(bondGeo); materials.push(bondMat);
                 const bond = new THREE.Mesh(bondGeo, bondMat);
                 bond.position.set(x / 2, y / 2, z / 2);
                 bond.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(x, y, z).normalize());
                 group.add(bond);
             }
-
             scene.add(group);
-
             let currentAnimId = null;
-
             function animate() {
                 currentAnimId = requestAnimationFrame(animate);
-                if (activeInstances[containerId]) {
-                    activeInstances[containerId].animId = currentAnimId;
-                }
+                if (activeInstances[containerId]) activeInstances[containerId].animId = currentAnimId;
                 group.rotation.x += 0.004 * theta;
                 group.rotation.y += 0.008;
                 renderer.render(scene, camera);
             }
-
-            activeInstances[containerId] = {
-                renderer: renderer,
-                animId: null,
-                geometries: geometries,
-                materials: materials
-            };
-
+            activeInstances[containerId] = { renderer: renderer, animId: null, geometries: geometries, materials: materials };
             animate();
         }
-
         function filterDiscoveries() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             currentFiltered = universalTargetsDataset.filter(item => {
@@ -621,11 +499,7 @@
             });
             renderCards();
         }
-
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
+        function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
         function exportUniversalJSON() {
             const exportData = universalTargetsDataset.map(item => {
                 const hdpa = calculateHDPA(item.phaseVal, currentKgain, targetTheta);
@@ -642,10 +516,7 @@
             downloadAnchor.remove();
             URL.revokeObjectURL(url);
         }
-
-        window.onload = function() {
-            renderCards();
-        };
+        window.onload = function() { renderCards(); };
     </script>
 </body>
 </html>
