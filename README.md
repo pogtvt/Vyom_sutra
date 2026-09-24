@@ -9,7 +9,7 @@ content = """# 🚀 Vyom Sutra
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg?style=for-the-badge)](https://www.python.org/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22247703-blueviolet.svg?style=for-the-badge)](https://doi.org/10.5281/zenodo.22725206)
 
-[💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [🌌 **Universe Simulation**](https://github.com/pogtvt/Vyom_sutra/blob/main/universe_simulation.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) • [🎛️ **Synth**](https://pogtvt.github.io/Vyom_sutra/synth.html)[ **Hub**](https://pogtvt.github.io/Vyom_sutra/index.html)
+[💊 **Drug Discovery**](https://github.com/pogtvt/Vyom_sutra/blob/main/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [🌌 **Universe Simulation**](https://github.com/pogtvt/Vyom_sutra/blob/main/universe_simulation.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) • [🎛️ **Synth**](https://pogtvt.github.io/Vyom_sutra/synth.html)[ **Hub**](https://pogtvt.github.io/Vyom_sutra/index.html)
 
 </div>
 
@@ -23,7 +23,7 @@ content = """# 🚀 Vyom Sutra
 
 ## 🚨 1. Critical High-Priority Systems
 
-* 🚀 **[Vyom Drug Discovery & Generation Engine](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html)**
+* 🚀 **[Vyom Drug Discovery & Generation Engine](https://github.com/pogtvt/Vyom_sutra/blob/main/drug_discovery.html)**
   *Deterministic $O(1)$ Multi-Protein Screening & Dyadic Scale Inverse Generation engine displaying real-time molecular weights, LogP, phase angles, resonance scores ($P$), and lab SA synthesis scoring tables.*
 
 * 🚀 **[Disaster Prediction System](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html)**
