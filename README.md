@@ -9,7 +9,8 @@ content = """# 🚀 Vyom Sutra
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg?style=for-the-badge)](https://www.python.org/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22247703-blueviolet.svg?style=for-the-badge)](https://zenodo.org/records/23010956)
 
-[💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) [🌌 [ **Hub**](https://zenodo.org/records/23010956)
+[💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) 
+[🌌 **Hub**](https://zenodo.org/records/23010956)
 
 </div>
 
@@ -31,10 +32,8 @@ content = """# 🚀 Vyom Sutra
 
 ---
 
-## 🌌 2. Core Simulations & System States
+## 🪐  2. Core Simulations & System States
 
-* 🚀 **[Universe Simulation Engine](https://pogtvt.github.io/Vyom_sutra/universe_simulation.html)**
-  *Universal scale-summation and cosmic field wave simulation modeling macro-scale physical interactions.*
 
 * 🚀 **[Wave States & Signal Hierarchy](https://pogtvt.github.io/Vyom_sutra/wave_states.html)**
   *Sine wave states explanation, signal hierarchy, and dynamic quantum-harmonic state visualization module.*
@@ -44,11 +43,8 @@ content = """# 🚀 Vyom Sutra
 
 ---
 
-## 🎛️ 3. Interactive Web Modules & Games
 
-* **[Vyom Wave Synthesizer](https://pogtvt.github.io/Vyom_sutra/synth.html)** - Web Audio API signal generator with custom frequency sliders.
-
-* **[Master Dashboard Hub](https://zenodo.org/records/23010956)** - Central interactive dashboard connecting all active modules.
+* 🌌 **[Master Dashboard Hub](https://zenodo.org/records/23010956)** - Central interactive dashboard connecting all active modules.
 
 ---
 
