@@ -5,7 +5,7 @@ content = """# 🚀 Vyom Sutra
 <div align="center">
 
 [![PyPI version](https://img.shields.io/pypi/v/vyom-sutra.svg?color=blue&style=for-the-badge)](https://pypi.org/project/vyom-sutra/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://doi.org/10.5281/zenodo.23010956)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg?style=for-the-badge)](https://www.python.org/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22247703-blueviolet.svg?style=for-the-badge)](https://doi.org/10.5281/zenodo.22725206)
 
