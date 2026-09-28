@@ -7,9 +7,9 @@ content = """# 🚀 Vyom Sutra
 [![PyPI version](https://img.shields.io/pypi/v/vyom-sutra.svg?color=blue&style=for-the-badge)](https://pypi.org/project/vyom-sutra/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://doi.org/10.5281/zenodo.23010956)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg?style=for-the-badge)](https://www.python.org/)
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22247703-blueviolet.svg?style=for-the-badge)](https://doi.org/10.5281/zenodo.23010956)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22247703-blueviolet.svg?style=for-the-badge)](https://zenodo.org/records/23010956)
 
-[💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [🪐  **Universe Simulation**](https://github.com/pogtvt/Vyom_sutra/universe_simulation.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) [🌌 [ **Hub**](https://doi.org/10.5281/zenodo.23010956)
+[💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) [🌌 [ **Hub**](https://zenodo.org/records/23010956)
 
 </div>
 
@@ -48,7 +48,7 @@ content = """# 🚀 Vyom Sutra
 
 * **[Vyom Wave Synthesizer](https://pogtvt.github.io/Vyom_sutra/synth.html)** - Web Audio API signal generator with custom frequency sliders.
 
-* **[Master Dashboard Hub](https://pogtvt.github.io/Vyom_sutra/index.html)** - Central interactive dashboard connecting all active modules.
+* **[Master Dashboard Hub](https://zenodo.org/records/23010956)** - Central interactive dashboard connecting all active modules.
 
 ---
 
