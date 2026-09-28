@@ -10,6 +10,7 @@ content = """# 🚀 Vyom Sutra
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22247703-blueviolet.svg?style=for-the-badge)](https://zenodo.org/records/23010956)
 
 [💊 **Drug Discovery**](https://pogtvt.github.io/Vyom_sutra/drug_discovery.html) • [🚨 **Disaster Prediction**](https://pogtvt.github.io/Vyom_sutra/Disaster_prediction/Disaster_prediction.html) • [〰️ **Wave States**](https://pogtvt.github.io/Vyom_sutra/wave_states.html) • [🕹️ **NPC Game**](https://pogtvt.github.io/Vyom_sutra/fast_decision_npc_game.html) 
+•
 [🌌 **Hub**](https://zenodo.org/records/23010956)
 
 </div>
